@@ -84,9 +84,11 @@
                         <button class="btn-result-clear" id="clearResultBtn">
                             <i class="fas fa-times-circle"></i> ရှင်းမည်
                         </button>
-                        <button class="btn-calculate" id="calculateBtn">
-                            <i class="fas fa-calculator"></i> တွက်မည်
-                        </button>
+                    </div>
+                    
+                    <div class="result-status">
+                        <div class="status-label">လက်ရှိအခြေအနေ:</div>
+                        <div class="status-value" id="resultStatus">ပေါက်ဂဏန်း မသတ်မှတ်ရသေး</div>
                     </div>
                 </div>
 
@@ -137,8 +139,10 @@
                                     <th>နာမည်</th>
                                     <th>နံပါတ်</th>
                                     <th>အမျိုးအစား</th>
+                                    <th>အဆ</th>
                                     <th>ပမာဏ</th>
                                     <th>ရလဒ်</th>
+                                    <th>ထွက်ငွေ</th>
                                     <th>အသားတင်</th>
                                 </tr>
                             </thead>
@@ -156,6 +160,7 @@
                         <button class="tab-btn" data-tab="back-tab">နောက်စာရင်း</button>
                         <button class="tab-btn" data-tab="double-tab">အပူးစာရင်း</button>
                         <button class="tab-btn" data-tab="apa-tab">အပါစာရင်း</button>
+                        <button class="tab-btn" data-tab="winners-tab">ပေါက်သူများ</button>
                     </div>
                     
                     <div class="tab-content">
@@ -184,6 +189,13 @@
                         <div class="tab-pane" id="apa-tab">
                             <div class="apa-summary">
                                 <!-- အပါစာရင်းများ ဤနေရာတွင် ပြသပါမည် -->
+                            </div>
+                        </div>
+                        
+                        <!-- ပေါက်သူများစာရင်း -->
+                        <div class="tab-pane" id="winners-tab">
+                            <div class="winners-summary" id="winnersSummary">
+                                <!-- ပေါက်သူများ ဤနေရာတွင် ပြသပါမည် -->
                             </div>
                         </div>
                     </div>
@@ -229,12 +241,12 @@
                             <button class="keypad-btn function-btn apa-btn" id="apaBtn">
                                 <i class="fas fa-star"></i> အပါ
                             </button>
-                            <button class="keypad-btn function-btn confirm-btn" id="confirmBtn">
-                                <i class="fas fa-check"></i> OK
+                            <button class="keypad-btn function-btn single-btn" id="singleBtn">
+                                <i class="fas fa-hashtag"></i> တစ်လုံးချင်း
                             </button>
                         </div>
                         
-                        <!-- ပဉ္စမအတန်း (ထပ်ထည့်ထားသော) -->
+                        <!-- ပဉ္စမအတန်း -->
                         <div class="keypad-row">
                             <button class="keypad-btn function-btn delete-btn" id="deleteBtn">
                                 <i class="fas fa-backspace"></i> DEL
@@ -242,16 +254,23 @@
                             <button class="keypad-btn function-btn clear-btn" id="clearAllBtn">
                                 <i class="fas fa-broom"></i> ရှင်းမည်
                             </button>
-                            <button class="keypad-btn function-btn single-btn" id="singleBtn" style="grid-column: span 2;">
-                                <i class="fas fa-hashtag"></i> တစ်လုံးချင်း
+                            <button class="keypad-btn function-btn confirm-btn" id="confirmBtn" style="grid-column: span 2;">
+                                <i class="fas fa-check"></i> OK
                             </button>
                         </div>
                     </div>
                     
                     <div class="bet-type-controls">
                         <div class="bet-amount-control">
-                            <label for="betAmount">ထိုးငွေပမာဏ (ကျပ်):</label>
-                            <input type="number" id="betAmount" value="100" min="100" step="100" class="amount-input">
+                            <div class="amount-row">
+                                <label for="betAmount">ထိုးငွေပမာဏ (ကျပ်):</label>
+                                <input type="number" id="betAmount" value="100" min="100" step="100" class="amount-input">
+                            </div>
+                            <div class="amount-row">
+                                <label for="multiplier">အဆ:</label>
+                                <input type="number" id="multiplier" value="8" min="1" max="100" class="amount-input" style="width: 80px;">
+                                <span class="multiplier-info" id="multiplierInfo">ဆ</span>
+                            </div>
                         </div>
                         <div class="current-selection">
                             <span id="currentSelectionText">ရွေးချယ်ထားသော နံပါတ်: -</span>
@@ -273,6 +292,11 @@
                     <div class="form-group">
                         <label for="newUserName">နာမည်</label>
                         <input type="text" id="newUserName" placeholder="နာမည်ထည့်ပါ" class="form-input" autofocus>
+                    </div>
+                    <div class="form-group">
+                        <label for="newUserMultiplier">အဆ (ပုံသေ)</label>
+                        <input type="number" id="newUserMultiplier" placeholder="8" class="form-input" value="8" min="1" max="100">
+                        <div class="form-hint">ဤသူ၏ ပေါက်ငွေတွက်ချက်ရာတွင် အသုံးပြုမည့်အဆ</div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -314,6 +338,7 @@
                                 <tr>
                                     <th>နံပါတ်</th>
                                     <th>အမျိုးအစား</th>
+                                    <th>အဆ</th>
                                     <th>ပမာဏ</th>
                                     <th>ရလဒ်</th>
                                     <th>ထွက်ငွေ</th>
