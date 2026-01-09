@@ -5,74 +5,168 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2D Pro Manager</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="app-container">
+    <div class="container">
         <header>
-            <button class="back-btn">←</button>
-            <h1>2D PRO MANAGER</h1>
-            <button class="admin-badge">Admin</button>
+            <h1><i class="fas fa-chart-line"></i> 2D PRO MANAGER</h1>
         </header>
-
-        <main>
-            <div class="input-group">
-                <input type="text" id="userName" placeholder="အမည် ရိုက်ထည့်ပါ">
-            </div>
-
-            <div class="display-section">
-                <input type="text" id="displayNum" placeholder="ဂဏန်း" readonly>
-                <input type="text" id="displayAmt" placeholder="ငွေပမာဏ" readonly>
-            </div>
-
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>အမည်</th>
-                            <th>ဂဏန်း</th>
-                            <th>ပမာဏ (ကျပ်)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="dataList"></tbody>
-                </table>
-            </div>
-
-            <div class="numpad">
-                <div class="num-row">
-                    <button onclick="appendValue('7')">7</button>
-                    <button onclick="appendValue('8')">8</button>
-                    <button onclick="appendValue('9')">9</button>
-                    <button class="orange-btn" onclick="toggleInputType()">R</button>
+        
+        <div class="app-container">
+            <!-- ဘယ်ဘက်အပိုင်း -->
+            <div class="left-section">
+                <div class="user-info">
+                    <div class="form-group">
+                        <label for="userName"><i class="fas fa-user"></i> အမည်</label>
+                        <input type="text" id="userName" placeholder="နာမည်ထည့်ပါ" value="noub abb8">
+                    </div>
+                    <div class="form-group">
+                        <label for="userRole"><i class="fas fa-user-tag"></i> အခန်းကဏ္ဍ</label>
+                        <select id="userRole">
+                            <option value="admin">Admin</option>
+                            <option value="user">User</option>
+                            <option value="manager">Manager</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="customName"><i class="fas fa-tag"></i> အမည်စိတ်ကြိုက်</label>
+                        <input type="text" id="customName" placeholder="စိတ်ကြိုက်အမည်" value="WinningNum">
+                    </div>
                 </div>
-                <div class="num-row">
-                    <button onclick="appendValue('4')">4</button>
-                    <button onclick="appendValue('5')">5</button>
-                    <button onclick="appendValue('6')">6</button>
-                    <button class="green-btn" onclick="saveEntry()">အိုကေ</button>
-                </div>
-                <div class="num-row">
-                    <button onclick="appendValue('1')">1</button>
-                    <button onclick="appendValue('2')">2</button>
-                    <button onclick="appendValue('3')">3</button>
-                    <button class="red-btn" onclick="clearLast()">DEL</button>
-                </div>
-                <div class="num-row">
-                    <button onclick="appendValue('0')">0</button>
-                    <button onclick="appendValue('00')">00</button>
-                    <button class="blue-btn" style="flex: 2;" onclick="saveEntry()">သိမ်းမည်</button>
+                
+                <div class="betting-section">
+                    <div class="section-title">
+                        <i class="fas fa-money-bill-wave"></i> ထိုးကြေးထည့်ရန်
+                    </div>
+                    
+                    <div class="amount-display" id="amountDisplay">
+                        <div class="amount-row">
+                            <span>F2</span>
+                            <span>11</span>
+                            <span>20</span>
+                            <span>2</span>
+                            <span>1.00</span>
+                        </div>
+                        <div class="amount-row">
+                            <span>F2</span>
+                            <span>12</span>
+                            <span>80</span>
+                            <span>3</span>
+                            <span>1.00</span>
+                        </div>
+                        <div class="amount-row">
+                            <span>F2</span>
+                            <span>12</span>
+                            <span>90</span>
+                            <span>3</span>
+                            <span>1.00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="section-title">
+                        <i class="fas fa-list-ol"></i> နံပါတ်များ
+                    </div>
+                    
+                    <div class="number-pad">
+                        <div class="numbers-display" id="numbersDisplay">
+                            <!-- နံပါတ်များ ဤနေရာတွင် ပြသပါမည် -->
+                        </div>
+                        <div class="keypad">
+                            <div class="key-row">
+                                <button class="key" data-value="7">7</button>
+                                <button class="key" data-value="8">8</button>
+                                <button class="key" data-value="9">9</button>
+                            </div>
+                            <div class="key-row">
+                                <button class="key" data-value="4">4</button>
+                                <button class="key" data-value="5">5</button>
+                                <button class="key" data-value="6">6</button>
+                            </div>
+                            <div class="key-row">
+                                <button class="key" data-value="1">1</button>
+                                <button class="key" data-value="2">2</button>
+                                <button class="key" data-value="3">3</button>
+                            </div>
+                            <div class="key-row">
+                                <button class="key" data-value="00">00</button>
+                                <button class="key" data-value="0">0</button>
+                                <button class="key del" id="deleteBtn"><i class="fas fa-backspace"></i> ဖျက်မည်</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="total-section">
+                        <div class="total-display">
+                            <span class="total-label">စုစုပေါင်း:</span>
+                            <span class="total-amount" id="totalAmount">၂၃ ကျပ်</span>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button class="btn-clear" id="clearAllBtn"><i class="fas fa-trash-alt"></i> အားလုံးဖျက်မည်</button>
+                            <button class="btn-submit" id="submitBtn"><i class="fas fa-check-circle"></i> အတည်ပြုမည်</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <div class="footer-total">
-                <span>စုစုပေါင်း:</span>
-                <span id="totalPriceDisplay">0</span> ကျပ်
+            
+            <!-- ညာဘက်အပိုင်း -->
+            <div class="right-section">
+                <div class="right-header">
+                    <h2><i class="fas fa-history"></i> အနိုင်ရသမိုင်း</h2>
+                    <div class="history-link">
+                        <a href="https://mstt.2D.8nhyluld/Classist/removeve" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> သမိုင်းကြည့်ရန်
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="history-table-container">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>အမည်</th>
+                                <th>ငွေပမာဏ (ကျပ်)</th>
+                                <th>လုပ်ဆောင်ချက်</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <!-- သမိုင်းမှတ်တမ်းများ ဤနေရာတွင် ထည့်သွင်းပါမည် -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="back-button">
+                    <button id="backToAppBtn"><i class="fas fa-arrow-left"></i> အက်ပ်သို့ပြန်သွားမည်</button>
+                </div>
             </div>
-
-            <div class="action-buttons">
-                <button class="clear-all" onclick="clearAllData()">အားလုံးဖျက်မည်</button>
+        </div>
+        
+        <!-- အသစ်ထည့်ရန် modal -->
+        <div class="modal" id="addModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-plus-circle"></i> အသစ်ထည့်ရန်</h3>
+                    <span class="close-modal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="newName">အမည်</label>
+                        <input type="text" id="newName" placeholder="အမည်ထည့်ပါ">
+                    </div>
+                    <div class="form-group">
+                        <label for="newAmount">ပမာဏ (ကျပ်)</label>
+                        <input type="number" id="newAmount" placeholder="ကျပ်ပမာဏထည့်ပါ">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-cancel">မလုပ်တော့ပါ</button>
+                    <button class="btn-save" id="saveNewBtn">သိမ်းမည်</button>
+                </div>
             </div>
-        </main>
+        </div>
     </div>
+    
     <script src="script.js"></script>
 </body>
 </html>
