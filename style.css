@@ -558,7 +558,7 @@ body {
     padding: 15px;
     border: 1px solid #3c40c6;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    height: 250px;
+    height: 280px;
     display: flex;
     flex-direction: column;
 }
@@ -579,6 +579,7 @@ body {
     cursor: pointer;
     transition: all 0.3s;
     border-bottom: 3px solid transparent;
+    font-size: 0.9rem;
 }
 
 .tab-btn:hover {
@@ -606,7 +607,7 @@ body {
     display: block;
 }
 
-.front-summary, .back-summary, .double-summary {
+.front-summary, .back-summary, .double-summary, .apa-summary {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 10px;
@@ -658,8 +659,8 @@ body {
 }
 
 .keypad-btn {
-    padding: 18px;
-    font-size: 1.5rem;
+    padding: 15px;
+    font-size: 1.2rem;
     font-weight: 900;
     border: none;
     border-radius: 8px;
@@ -724,13 +725,40 @@ body {
     background-color: #8e44ad;
 }
 
-.delete-btn {
+.apa-btn {
     background-color: #e74c3c;
     color: white;
 }
 
-.delete-btn:hover {
+.apa-btn:hover {
     background-color: #c0392b;
+}
+
+.delete-btn {
+    background-color: #95a5a6;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #7f8c8d;
+}
+
+.clear-btn {
+    background-color: #e67e22;
+    color: white;
+}
+
+.clear-btn:hover {
+    background-color: #d35400;
+}
+
+.single-btn {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.single-btn:hover {
+    background-color: #27ae60;
 }
 
 .confirm-btn {
@@ -999,7 +1027,7 @@ body {
         flex: none;
     }
     
-    .front-summary, .back-summary, .double-summary {
+    .front-summary, .back-summary, .double-summary, .apa-summary {
         grid-template-columns: repeat(4, 1fr);
     }
 }
@@ -1010,11 +1038,11 @@ body {
     }
     
     .keypad-btn {
-        padding: 15px;
-        font-size: 1.3rem;
+        padding: 12px;
+        font-size: 1rem;
     }
     
-    .front-summary, .back-summary, .double-summary {
+    .front-summary, .back-summary, .double-summary, .apa-summary {
         grid-template-columns: repeat(3, 1fr);
     }
     
@@ -1030,5 +1058,15 @@ body {
     .table-controls {
         flex-direction: column;
         align-items: flex-start;
+    }
+    
+    .table-tabs {
+        flex-wrap: wrap;
+    }
+    
+    .tab-btn {
+        flex: 0 0 50%;
+        font-size: 0.8rem;
+        padding: 8px;
     }
 }
