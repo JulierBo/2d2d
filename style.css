@@ -1,23 +1,573 @@
-* { box-sizing: border-box; font-family: 'Pyidaungsu', sans-serif; }
-body { background: #f4f4f4; display: flex; justify-content: center; padding: 10px; }
-.app-container { width: 100%; max-width: 400px; background: #fff; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-header { background: #2c3e50; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-.input-group { padding: 10px; }
-input { width: 100%; padding: 12px; margin-bottom: 5px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; }
-.display-section { display: flex; gap: 5px; padding: 0 10px; }
-.display-section input { background: #f9f9f9; text-align: center; font-weight: bold; color: #2c3e50; }
-.table-container { height: 180px; overflow-y: auto; margin: 10px; border: 1px solid #eee; }
-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-th { background: #eee; padding: 10px; position: sticky; top: 0; }
-td { padding: 10px; text-align: center; border-bottom: 1px solid #eee; }
-.numpad { padding: 10px; display: flex; flex-direction: column; gap: 5px; }
-.num-row { display: flex; gap: 5px; }
-.num-row button { flex: 1; padding: 15px; font-size: 18px; border: 1px solid #ddd; background: #fff; border-radius: 8px; cursor: pointer; }
-.num-row button:active { background: #eee; }
-.orange-btn { background: #f39c12 !important; color: white; }
-.green-btn { background: #27ae60 !important; color: white; }
-.red-btn { background: #e74c3c !important; color: white; }
-.blue-btn { background: #2980b9 !important; color: white; }
-.footer-total { padding: 15px; text-align: right; font-size: 18px; font-weight: bold; color: #d35400; border-top: 2px solid #eee; }
-.action-buttons { padding: 10px; }
-.clear-all { width: 100%; padding: 12px; background: #95a5a6; color: white; border: none; border-radius: 5px; cursor: pointer; }
+/* အခြေခံသတ်မှတ်ချက်များ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', 'Myanmar Text', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #1a2980, #26d0ce);
+    color: #333;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+/* Header */
+header {
+    background: linear-gradient(to right, #2c3e50, #4a6491);
+    color: white;
+    padding: 20px 30px;
+    text-align: center;
+    border-bottom: 5px solid #f39c12;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+/* App Container */
+.app-container {
+    display: flex;
+    min-height: 800px;
+}
+
+/* ဘယ်ဘက်အပိုင်း */
+.left-section {
+    flex: 1;
+    padding: 25px;
+    border-right: 2px solid #eee;
+    background-color: #f8f9fa;
+}
+
+.user-info {
+    background-color: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    border-left: 5px solid #3498db;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.form-group input:focus, .form-group select:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.betting-section {
+    background-color: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    border-left: 5px solid #e74c3c;
+}
+
+.section-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px dashed #ddd;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.amount-display {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 25px;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #e0e0e0;
+}
+
+.amount-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+    font-family: monospace;
+    font-size: 1.1rem;
+}
+
+.amount-row:last-child {
+    border-bottom: none;
+}
+
+.amount-row span {
+    flex: 1;
+    text-align: center;
+    font-weight: 600;
+}
+
+.amount-row span:last-child {
+    color: #e74c3c;
+    font-weight: 700;
+}
+
+.number-pad {
+    margin-bottom: 25px;
+}
+
+.numbers-display {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
+    min-height: 100px;
+    margin-bottom: 15px;
+    border: 2px solid #ddd;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+.number-badge {
+    background-color: #3498db;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.number-badge .remove-number {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 2px 5px;
+    border-radius: 50%;
+}
+
+.number-badge .remove-number:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.key-row {
+    display: contents;
+}
+
+.key {
+    padding: 20px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    background-color: #f1f2f6;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #2c3e50;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.key:hover {
+    background-color: #dfe4ea;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.key:active {
+    transform: translateY(0);
+}
+
+.key.del {
+    background-color: #e74c3c;
+    color: white;
+    grid-column: span 1;
+}
+
+.key.del:hover {
+    background-color: #c0392b;
+}
+
+.total-section {
+    background-color: #f8f9fa;
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 20px;
+    border: 2px solid #2ecc71;
+}
+
+.total-display {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px dashed #ddd;
+}
+
+.total-label {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.total-amount {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: #27ae60;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.action-buttons button {
+    flex: 1;
+    padding: 15px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-clear {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.btn-clear:hover {
+    background-color: #c0392b;
+}
+
+.btn-submit {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.btn-submit:hover {
+    background-color: #27ae60;
+}
+
+/* ညာဘက်အပိုင်း */
+.right-section {
+    flex: 1;
+    padding: 25px;
+    background-color: #f8f9fa;
+}
+
+.right-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #ddd;
+}
+
+.right-header h2 {
+    font-size: 1.8rem;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.history-link a {
+    background-color: #3498db;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+}
+
+.history-link a:hover {
+    background-color: #2980b9;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.history-table-container {
+    background-color: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    border-left: 5px solid #9b59b6;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.history-table thead {
+    background-color: #3498db;
+    color: white;
+    position: sticky;
+    top: 0;
+}
+
+.history-table th {
+    padding: 15px;
+    text-align: left;
+    font-size: 1.1rem;
+}
+
+.history-table tbody tr {
+    border-bottom: 1px solid #eee;
+    transition: all 0.2s;
+}
+
+.history-table tbody tr:hover {
+    background-color: #f1f8ff;
+}
+
+.history-table td {
+    padding: 15px;
+    font-size: 1rem;
+}
+
+.history-table td:last-child {
+    text-align: center;
+}
+
+.action-btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.edit-btn {
+    background-color: #f39c12;
+    color: white;
+}
+
+.edit-btn:hover {
+    background-color: #d68910;
+}
+
+.delete-btn {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #c0392b;
+}
+
+.back-button {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.back-button button {
+    background-color: #2c3e50;
+    color: white;
+    padding: 15px 40px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.back-button button:hover {
+    background-color: #1a252f;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: white;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    background-color: #3498db;
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.close-modal {
+    font-size: 2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.close-modal:hover {
+    color: #f1c40f;
+    transform: scale(1.1);
+}
+
+.modal-body {
+    padding: 25px;
+}
+
+.modal-footer {
+    padding: 20px;
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+}
+
+.modal-footer button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-cancel {
+    background-color: #95a5a6;
+    color: white;
+}
+
+.btn-cancel:hover {
+    background-color: #7f8c8d;
+}
+
+.btn-save {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.btn-save:hover {
+    background-color: #27ae60;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .app-container {
+        flex-direction: column;
+    }
+    
+    .left-section {
+        border-right: none;
+        border-bottom: 2px solid #eee;
+    }
+}
+
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .keypad {
+        gap: 10px;
+    }
+    
+    .key {
+        padding: 15px;
+        font-size: 1.2rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .history-table th, 
+    .history-table td {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+}
