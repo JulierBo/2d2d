@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D Pro Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <button class="back-btn">←</button>
+            <h1>2D PRO MANAGER</h1>
+            <button class="admin-badge">Admin</button>
+        </header>
+
+        <main>
+            <div class="input-group">
+                <input type="text" placeholder="အမည် ရွေးရန်" id="nameInput">
+                <span class="label-info">(Admin)</span>
+            </div>
+
+            <div class="purple-box">
+                <input type="number" placeholder="ထွက်ဂဏန်း" id="winNum">
+                <input type="number" placeholder="ထိုးကြေးစုစုပေါင်း" id="totalAmt">
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>အမျိုးအစား</th>
+                            <th>ဂဏန်း</th>
+                            <th>ပမာဏ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataList">
+                        <tr>
+                            <td>F2</td>
+                            <td>12</td>
+                            <td>1,000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="numpad">
+                <div class="num-row">
+                    <button onclick="appendNum(7)">7</button>
+                    <button onclick="appendNum(8)">8</button>
+                    <button onclick="appendNum(9)">9</button>
+                    <button class="orange-btn">R</button>
+                </div>
+                <div class="num-row">
+                    <button onclick="appendNum(4)">4</button>
+                    <button onclick="appendNum(5)">5</button>
+                    <button onclick="appendNum(6)">6</button>
+                    <button class="green-btn">အိုကေ</button>
+                </div>
+                <div class="num-row">
+                    <button onclick="appendNum(1)">1</button>
+                    <button onclick="appendNum(2)">2</button>
+                    <button onclick="appendNum(3)">3</button>
+                    <button class="red-btn" onclick="clearInput()">DEL</button>
+                </div>
+                <div class="num-row">
+                    <button onclick="appendNum(0)">0</button>
+                    <button onclick="appendNum('00')">00</button>
+                    <button class="blue-btn" style="flex: 2;">သိမ်းမည်</button>
+                </div>
+            </div>
+
+            <div class="footer-total">
+                <span>စုစုပေါင်း:</span>
+                <span class="total-price">0 ကျပ်</span>
+            </div>
+
+            <div class="action-buttons">
+                <button class="clear-all">အားလုံးဖျက်မည်</button>
+                <button class="history-btn">မှတ်တမ်းကြည့်ရန်</button>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
