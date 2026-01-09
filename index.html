@@ -3,170 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2D Pro Manager</title>
+    <title>KKuser2D - 2D ထိုးကြေးစနစ်</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1><i class="fas fa-chart-line"></i> 2D PRO MANAGER</h1>
-        </header>
-        
-        <div class="app-container">
-            <!-- ဘယ်ဘက်အပိုင်း -->
-            <div class="left-section">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="app-title">
+                <h1><i class="fas fa-dice-two"></i> KKuser2D</h1>
                 <div class="user-info">
-                    <div class="form-group">
-                        <label for="userName"><i class="fas fa-user"></i> အမည်</label>
-                        <input type="text" id="userName" placeholder="နာမည်ထည့်ပါ" value="noub abb8">
+                    <span class="role-badge">Admin</span>
+                    <span class="user-stats">(15/80)</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-app">
+            <!-- ဘယ်ဘက်အပိုင်း - ထိုးကြေးရွေးချယ်ခြင်း -->
+            <div class="left-panel">
+                <!-- နာမည်စာရင်းနှင့် ရွေးချယ်မှု -->
+                <div class="name-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-users"></i> နာမည်စာရင်း</h3>
+                        <button class="btn-add-name" id="addNameBtn">
+                            <i class="fas fa-plus"></i> အသစ်ထည့်မည်
+                        </button>
                     </div>
-                    <div class="form-group">
-                        <label for="userRole"><i class="fas fa-user-tag"></i> အခန်းကဏ္ဍ</label>
-                        <select id="userRole">
-                            <option value="admin">Admin</option>
-                            <option value="user">User</option>
-                            <option value="manager">Manager</option>
-                        </select>
+                    
+                    <div class="name-list" id="nameList">
+                        <!-- နာမည်များ ဤနေရာတွင် ပြသပါမည် -->
                     </div>
-                    <div class="form-group">
-                        <label for="customName"><i class="fas fa-tag"></i> အမည်စိတ်ကြိုက်</label>
-                        <input type="text" id="customName" placeholder="စိတ်ကြိုက်အမည်" value="WinningNum">
+                    
+                    <div class="name-controls">
+                        <button class="btn-clear-all" id="clearNamesBtn">
+                            <i class="fas fa-trash"></i> အားလုံးဖျက်မည်
+                        </button>
+                        <button class="btn-save-names" id="saveNamesBtn">
+                            <i class="fas fa-save"></i> သိမ်းမည်
+                        </button>
                     </div>
                 </div>
-                
-                <div class="betting-section">
-                    <div class="section-title">
-                        <i class="fas fa-money-bill-wave"></i> ထိုးကြေးထည့်ရန်
+
+                <!-- ပေါက်ဂဏန်း သတ်မှတ်ခြင်း -->
+                <div class="result-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-trophy"></i> ပေါက်ဂဏန်း</h3>
                     </div>
                     
-                    <div class="amount-display" id="amountDisplay">
-                        <div class="amount-row">
-                            <span>F2</span>
-                            <span>11</span>
-                            <span>20</span>
-                            <span>2</span>
-                            <span>1.00</span>
+                    <div class="result-display">
+                        <div class="result-row">
+                            <div class="result-label">ထိပ်:</div>
+                            <input type="text" class="result-input" id="frontResult" placeholder="0" maxlength="1">
                         </div>
-                        <div class="amount-row">
-                            <span>F2</span>
-                            <span>12</span>
-                            <span>80</span>
-                            <span>3</span>
-                            <span>1.00</span>
+                        <div class="result-row">
+                            <div class="result-label">နောက်:</div>
+                            <input type="text" class="result-input" id="backResult" placeholder="0" maxlength="1">
                         </div>
-                        <div class="amount-row">
-                            <span>F2</span>
-                            <span>12</span>
-                            <span>90</span>
-                            <span>3</span>
-                            <span>1.00</span>
+                        <div class="result-row">
+                            <div class="result-label">အပူး:</div>
+                            <input type="text" class="result-input" id="doubleResult" placeholder="00" maxlength="2">
                         </div>
                     </div>
                     
-                    <div class="section-title">
-                        <i class="fas fa-list-ol"></i> နံပါတ်များ
+                    <div class="result-controls">
+                        <button class="btn-result-set" id="setResultBtn">
+                            <i class="fas fa-check-circle"></i> သတ်မှတ်မည်
+                        </button>
+                        <button class="btn-result-clear" id="clearResultBtn">
+                            <i class="fas fa-times-circle"></i> ရှင်းမည်
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ထိုးကြေးစာရင်း -->
+                <div class="bet-list-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-list"></i> ထိုးကြေးစာရင်း</h3>
                     </div>
                     
-                    <div class="number-pad">
-                        <div class="numbers-display" id="numbersDisplay">
-                            <!-- နံပါတ်များ ဤနေရာတွင် ပြသပါမည် -->
-                        </div>
-                        <div class="keypad">
-                            <div class="key-row">
-                                <button class="key" data-value="7">7</button>
-                                <button class="key" data-value="8">8</button>
-                                <button class="key" data-value="9">9</button>
-                            </div>
-                            <div class="key-row">
-                                <button class="key" data-value="4">4</button>
-                                <button class="key" data-value="5">5</button>
-                                <button class="key" data-value="6">6</button>
-                            </div>
-                            <div class="key-row">
-                                <button class="key" data-value="1">1</button>
-                                <button class="key" data-value="2">2</button>
-                                <button class="key" data-value="3">3</button>
-                            </div>
-                            <div class="key-row">
-                                <button class="key" data-value="00">00</button>
-                                <button class="key" data-value="0">0</button>
-                                <button class="key del" id="deleteBtn"><i class="fas fa-backspace"></i> ဖျက်မည်</button>
-                            </div>
-                        </div>
+                    <div class="bet-table-container">
+                        <table class="bet-table">
+                            <thead>
+                                <tr>
+                                    <th>နံပါတ်</th>
+                                    <th>အမျိုးအစား</th>
+                                    <th>ပမာဏ (ကျပ်)</th>
+                                    <th>လုပ်ဆောင်ချက်</th>
+                                </tr>
+                            </thead>
+                            <tbody id="betTableBody">
+                                <!-- ထိုးကြေးများ ဤနေရာတွင် ပြသပါမည် -->
+                            </tbody>
+                        </table>
                     </div>
                     
-                    <div class="total-section">
-                        <div class="total-display">
-                            <span class="total-label">စုစုပေါင်း:</span>
-                            <span class="total-amount" id="totalAmount">၂၃ ကျပ်</span>
-                        </div>
-                        
-                        <div class="action-buttons">
-                            <button class="btn-clear" id="clearAllBtn"><i class="fas fa-trash-alt"></i> အားလုံးဖျက်မည်</button>
-                            <button class="btn-submit" id="submitBtn"><i class="fas fa-check-circle"></i> အတည်ပြုမည်</button>
-                        </div>
+                    <div class="total-bet">
+                        <span class="total-label">စုစုပေါင်း:</span>
+                        <span class="total-amount" id="totalBetAmount">0 ကျပ်</span>
                     </div>
                 </div>
             </div>
-            
-            <!-- ညာဘက်အပိုင်း -->
-            <div class="right-section">
-                <div class="right-header">
-                    <h2><i class="fas fa-history"></i> အနိုင်ရသမိုင်း</h2>
-                    <div class="history-link">
-                        <a href="https://mstt.2D.8nhyluld/Classist/removeve" target="_blank">
-                            <i class="fas fa-external-link-alt"></i> သမိုင်းကြည့်ရန်
-                        </a>
+
+            <!-- ညာဘက်အပိုင်း - ဂဏန်းပြားနှင့် ထိန်းချုပ်မှုများ -->
+            <div class="right-panel">
+                <!-- ထပ်ခါတလဲလဲကူးခြင်း -->
+                <div class="copy-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-copy"></i> CopyPaste</h3>
+                    </div>
+                    
+                    <div class="copy-controls">
+                        <button class="btn-copy" id="copyBtn">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                        <button class="btn-paste" id="pasteBtn">
+                            <i class="fas fa-paste"></i> Paste
+                        </button>
+                        <button class="btn-clear-bets" id="clearBetsBtn">
+                            <i class="fas fa-broom"></i> အားလုံးဖျက်မည်
+                        </button>
                     </div>
                 </div>
-                
-                <div class="history-table-container">
-                    <table class="history-table">
-                        <thead>
-                            <tr>
-                                <th>အမည်</th>
-                                <th>ငွေပမာဏ (ကျပ်)</th>
-                                <th>လုပ်ဆောင်ချက်</th>
-                            </tr>
-                        </thead>
-                        <tbody id="historyTableBody">
-                            <!-- သမိုင်းမှတ်တမ်းများ ဤနေရာတွင် ထည့်သွင်းပါမည် -->
-                        </tbody>
-                    </table>
+
+                <!-- ဂဏန်းပြားနှင့် ရွေးချယ်မှုများ -->
+                <div class="number-selection">
+                    <div class="section-header">
+                        <h3><i class="fas fa-keyboard"></i> UnitKeyboard</h3>
+                    </div>
+                    
+                    <div class="current-number-display">
+                        <div class="display-label">လက်ရှိရွေးထားသော နံပါတ်:</div>
+                        <div class="number-display" id="currentNumberDisplay">-</div>
+                    </div>
+                    
+                    <div class="bet-type-controls">
+                        <button class="btn-bet-type active" data-type="single" id="singleBtn">
+                            တစ်လုံးချင်း
+                        </button>
+                        <button class="btn-bet-type" data-type="front" id="frontBtn">
+                            ထိပ်
+                        </button>
+                        <button class="btn-bet-type" data-type="back" id="backBtn">
+                            နောက်
+                        </button>
+                        <button class="btn-bet-type" data-type="double" id="doubleBtn">
+                            အပူး
+                        </button>
+                    </div>
                 </div>
-                
-                <div class="back-button">
-                    <button id="backToAppBtn"><i class="fas fa-arrow-left"></i> အက်ပ်သို့ပြန်သွားမည်</button>
+
+                <!-- ဂဏန်းပြား -->
+                <div class="keypad-section">
+                    <div class="keypad">
+                        <!-- ပထမအတန်း -->
+                        <div class="keypad-row">
+                            <button class="keypad-btn number-btn" data-value="7">7</button>
+                            <button class="keypad-btn number-btn" data-value="8">8</button>
+                            <button class="keypad-btn number-btn" data-value="9">9</button>
+                            <button class="keypad-btn function-btn" id="resetBtn">R</button>
+                        </div>
+                        
+                        <!-- ဒုတိယအတန်း -->
+                        <div class="keypad-row">
+                            <button class="keypad-btn number-btn" data-value="4">4</button>
+                            <button class="keypad-btn number-btn" data-value="5">5</button>
+                            <button class="keypad-btn number-btn" data-value="6">6</button>
+                            <button class="keypad-btn function-btn" id="selectAllBtn">soO</button>
+                        </div>
+                        
+                        <!-- တတိယအတန်း -->
+                        <div class="keypad-row">
+                            <button class="keypad-btn number-btn" data-value="1">1</button>
+                            <button class="keypad-btn number-btn" data-value="2">2</button>
+                            <button class="keypad-btn number-btn" data-value="3">3</button>
+                            <button class="keypad-btn function-btn confirm-btn" id="confirmBtn">OK</button>
+                        </div>
+                        
+                        <!-- စတုတ္ထအတန်း -->
+                        <div class="keypad-row">
+                            <button class="keypad-btn number-btn" data-value="0">0</button>
+                            <button class="keypad-btn number-btn" data-value="00">00</button>
+                            <button class="keypad-btn function-btn delete-btn" id="deleteBtn">DEL</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ရက်လိုက်ပြန်ကြည့်ရန် -->
+                <div class="history-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-history"></i> ရက်လိုက်ပြန်ကြည့်ရန်</h3>
+                    </div>
+                    
+                    <div class="date-selector">
+                        <input type="date" id="historyDate" class="date-input">
+                        <button class="btn-view-history" id="viewHistoryBtn">
+                            <i class="fas fa-eye"></i> ကြည့်မည်
+                        </button>
+                    </div>
+                    
+                    <div class="history-display" id="historyDisplay">
+                        <div class="history-placeholder">
+                            ရက်စွဲရွေးပြီး ကြည့်ရှုနိုင်ပါသည်
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <!-- အသစ်ထည့်ရန် modal -->
-        <div class="modal" id="addModal">
+
+        <!-- နာမည်အသစ်ထည့်ရန် Modal -->
+        <div class="modal" id="addNameModal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3><i class="fas fa-plus-circle"></i> အသစ်ထည့်ရန်</h3>
-                    <span class="close-modal">&times;</span>
+                    <h3><i class="fas fa-user-plus"></i> နာမည်အသစ်ထည့်ရန်</h3>
+                    <span class="modal-close">&times;</span>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="newName">အမည်</label>
-                        <input type="text" id="newName" placeholder="အမည်ထည့်ပါ">
+                        <label for="newUserName">နာမည်</label>
+                        <input type="text" id="newUserName" placeholder="နာမည်ထည့်ပါ" class="form-input">
                     </div>
                     <div class="form-group">
-                        <label for="newAmount">ပမာဏ (ကျပ်)</label>
-                        <input type="number" id="newAmount" placeholder="ကျပ်ပမာဏထည့်ပါ">
+                        <label for="newUserAmount">ကြိုတင်ထားရှိငွေ (ကျပ်)</label>
+                        <input type="number" id="newUserAmount" placeholder="1000" class="form-input" value="1000">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn-cancel">မလုပ်တော့ပါ</button>
-                    <button class="btn-save" id="saveNewBtn">သိမ်းမည်</button>
+                    <button class="btn-modal btn-cancel">မလုပ်တော့ပါ</button>
+                    <button class="btn-modal btn-save" id="saveNewNameBtn">သိမ်းမည်</button>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <script src="script.js"></script>
 </body>
 </html>
