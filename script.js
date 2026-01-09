@@ -9,8 +9,11 @@ document.addEventListener('DOMContentLoaded', function() {
     let betsData = [
         // နမူနာဒေတာ
         { id: 1, personId: 1, personName: "ဦးကျော်မြင့်", number: "1", type: "front", amount: 1000, date: new Date().toISOString() },
-        { id: 2, personId: 2, personName: "မောင်မျိုးအောင်", number: "5", type: "back", amount: 2000, date: new Date().toISOString() },
-        { id: 3, personId: 3, personName: "ဒေါ်စန်းစန်း", number: "11", type: "double", amount: 3000, date: new Date().toISOString() }
+        { id: 2, personId: 1, personName: "ဦးကျော်မြင့်", number: "15", type: "apa", amount: 500, date: new Date().toISOString() },
+        { id: 3, personId: 2, personName: "မောင်မျိုးအောင်", number: "5", type: "back", amount: 2000, date: new Date().toISOString() },
+        { id: 4, personId: 2, personName: "မောင်မျိုးအောင်", number: "25", type: "apa", amount: 1500, date: new Date().toISOString() },
+        { id: 5, personId: 3, personName: "ဒေါ်စန်းစန်း", number: "11", type: "double", amount: 3000, date: new Date().toISOString() },
+        { id: 6, personId: 3, personName: "ဒေါ်စန်းစန်း", number: "36", type: "apa", amount: 1200, date: new Date().toISOString() }
     ];
     
     let winningNumbers = {
@@ -20,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     let selectedPersonId = null;
-    let currentBetType = "single"; // single, front, back, double
+    let currentBetType = "single"; // single, front, back, double, apa
     let selectedNumber = "";
     
     // DOM Elements
@@ -41,10 +44,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const exportBtn = document.getElementById('exportBtn');
     const numberButtons = document.querySelectorAll('.number-btn');
     const deleteBtn = document.getElementById('deleteBtn');
+    const clearAllBtn = document.getElementById('clearAllBtn');
     const confirmBtn = document.getElementById('confirmBtn');
     const frontBtn = document.getElementById('frontBtn');
     const backBtn = document.getElementById('backBtn');
     const doubleBtn = document.getElementById('doubleBtn');
+    const apaBtn = document.getElementById('apaBtn');
+    const singleBtn = document.getElementById('singleBtn');
     const frontResult = document.getElementById('frontResult');
     const backResult = document.getElementById('backResult');
     const doubleResult = document.getElementById('doubleResult');
@@ -167,7 +173,7 @@ document.addEventListener('DOMContentLoaded', function() {
             tableBody.innerHTML = `
                 <tr>
                     <td colspan="6" style="text-align: center; color: #aaa; font-style: italic; padding: 30px;">
-                        စာရင်းများ မရှိပါ။
+                        ${tableType === "all" ? "စာရင်းများ မရှိပါ။" : getBetTypeText(tableType) + " စာရင်းများ မရှိပါ။"}
                     </td>
                 </tr>
             `;
@@ -207,6 +213,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     winAmount = bet.amount * 85; // တစ်လုံးချင်းအတွက် 85ဆ
                     isWin = true;
                 }
+            } else if (bet.type === "apa") {
+                // အပါအတွက် ရလဒ်တွက်ချက်ရန်
+                const lastDigit = bet.number.slice(-1);
+                if (winningBack === lastDigit) {
+                    result = "ပေါက်ပါသည်";
+                    winAmount = bet.amount * 9; // အပါအတွက် 9ဆ
+                    isWin = true;
+                }
             }
             
             const netResult = winAmount - bet.amount;
@@ -232,6 +246,7 @@ document.addEventListener('DOMContentLoaded', function() {
             case "front": return `${number}ထိပ်`;
             case "back": return `${number}နောက်`;
             case "double": return number.length === 1 ? `0${number}` : number;
+            case "apa": return `${number}အပါ`;
             default: return number;
         }
     }
@@ -243,6 +258,7 @@ document.addEventListener('DOMContentLoaded', function() {
             case "front": return "ထိပ်";
             case "back": return "နောက်";
             case "double": return "အပူး";
+            case "apa": return "အပါ";
             default: return type;
         }
     }
@@ -267,6 +283,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (bet.number === combinedNumber) {
                     totalWin += bet.amount * 85;
                 }
+            } else if (bet.type === "apa") {
+                const lastDigit = bet.number.slice(-1);
+                if (winningNumbers.back === lastDigit) {
+                    totalWin += bet.amount * 9;
+                }
             }
         });
         
@@ -286,7 +307,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // အထူးစာရင်းဇယားများကို အပ်ဒိတ်လုပ်ရန်
     function updateSpecialTables() {
-        // ထိပ်များအတွက် စုစုပေါင်းထိုးငွေများ
+        // ထိပ်များအတွက် စုစုပေါင်းထိုးငွေများ (0-9)
         for (let i = 0; i <= 9; i++) {
             const frontTotal = betsData
                 .filter(bet => bet.type === "front" && bet.number === i.toString())
@@ -299,7 +320,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // နောက်များအတွက် စုစုပေါင်းထိုးငွေများ
+        // နောက်များအတွက် စုစုပေါင်းထိုးငွေများ (0-9)
         for (let i = 0; i <= 9; i++) {
             const backTotal = betsData
                 .filter(bet => bet.type === "back" && bet.number === i.toString())
@@ -312,8 +333,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // အပူးများအတွက် စုစုပေါင်းထိုးငွေများ (00-99)
-        for (let i = 0; i <= 99; i++) {
+        // အပူးများအတွက် စုစုပေါင်းထိုးငွေများ (00-33)
+        for (let i = 0; i <= 33; i++) {
             const numStr = i < 10 ? `0${i}` : i.toString();
             const doubleTotal = betsData
                 .filter(bet => bet.type === "double" && bet.number === numStr)
@@ -323,6 +344,20 @@ document.addEventListener('DOMContentLoaded', function() {
             const element = document.getElementById(elementId);
             if (element) {
                 element.textContent = `${doubleTotal.toLocaleString()} ကျပ်`;
+            }
+        }
+        
+        // အပါများအတွက် စုစုပေါင်းထိုးငွေများ (0-9)
+        for (let i = 0; i <= 9; i++) {
+            // အပါအတွက် နောက်ဆုံးဂဏန်း i ဖြစ်သော ထိုးကြေးများကို စုစုပေါင်းရန်
+            const apaTotal = betsData
+                .filter(bet => bet.type === "apa" && bet.number.slice(-1) === i.toString())
+                .reduce((sum, bet) => sum + bet.amount, 0);
+            
+            const elementId = `apa${i}Total`;
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = `${apaTotal.toLocaleString()} ကျပ်`;
             }
         }
     }
@@ -339,6 +374,14 @@ document.addEventListener('DOMContentLoaded', function() {
         
         currentSelectionText.textContent = displayText;
         currentBetTypeText.textContent = `အမျိုးအစား: ${getBetTypeText(currentBetType)}`;
+        
+        // ရွေးထားသော နာမည်ကို ပြသရန်
+        if (selectedPersonId) {
+            const person = namesData.find(p => p.id === selectedPersonId);
+            if (person) {
+                currentSelectionText.textContent += ` | နာမည်: ${person.name}`;
+            }
+        }
     }
     
     // နာမည်အသစ်ထည့်ရန်
@@ -425,6 +468,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         result = "ပေါက်ပါသည်";
                         winAmount = bet.amount * 85;
                     }
+                } else if (bet.type === "apa") {
+                    const lastDigit = bet.number.slice(-1);
+                    if (winningNumbers.back === lastDigit) {
+                        result = "ပေါက်ပါသည်";
+                        winAmount = bet.amount * 9;
+                    }
                 }
                 
                 totalBet += bet.amount;
@@ -472,6 +521,19 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!selectedNumber) {
             alert("ကျေးဇူးပြု၍ နံပါတ်ရွေးပါ။");
             return;
+        }
+        
+        // အပါအတွက် စစ်ဆေးရန်
+        if (currentBetType === "apa") {
+            if (selectedNumber.length < 2) {
+                alert("အပါအတွက် အနည်းဆုံး ၂ လုံးထည့်ပါ (ဥပမာ: 15, 27)။");
+                return;
+            }
+            const lastDigit = selectedNumber.slice(-1);
+            if (isNaN(lastDigit) || parseInt(lastDigit) < 0 || parseInt(lastDigit) > 9) {
+                alert("အပါအတွက် နောက်ဆုံးဂဏန်းသည် 0-9 ဖြစ်ရပါမည်။");
+                return;
+            }
         }
         
         const amount = parseInt(betAmount.value);
@@ -599,10 +661,73 @@ document.addEventListener('DOMContentLoaded', function() {
         resultDate.textContent = `ရက်စွဲ: ${now.toLocaleDateString('my-MM')}`;
     }
     
+    // အထူးစာရင်းဇယားများအတွက် HTML ဖန်တီးရန်
+    function createSpecialTableHTML() {
+        // ထိပ်စာရင်းအတွက်
+        const frontTab = document.getElementById('front-tab');
+        let frontHTML = '<div class="front-summary">';
+        for (let i = 0; i <= 9; i++) {
+            frontHTML += `
+                <div class="summary-row">
+                    <span>${i} ထိပ်</span>
+                    <span class="summary-amount" id="front${i}Total">0 ကျပ်</span>
+                </div>
+            `;
+        }
+        frontHTML += '</div>';
+        frontTab.innerHTML = frontHTML;
+        
+        // နောက်စာရင်းအတွက်
+        const backTab = document.getElementById('back-tab');
+        let backHTML = '<div class="back-summary">';
+        for (let i = 0; i <= 9; i++) {
+            backHTML += `
+                <div class="summary-row">
+                    <span>${i} နောက်</span>
+                    <span class="summary-amount" id="back${i}Total">0 ကျပ်</span>
+                </div>
+            `;
+        }
+        backHTML += '</div>';
+        backTab.innerHTML = backHTML;
+        
+        // အပူးစာရင်းအတွက် (00-33)
+        const doubleTab = document.getElementById('double-tab');
+        let doubleHTML = '<div class="double-summary">';
+        for (let i = 0; i <= 33; i++) {
+            const numStr = i < 10 ? `0${i}` : i.toString();
+            doubleHTML += `
+                <div class="summary-row">
+                    <span>${numStr}</span>
+                    <span class="summary-amount" id="double${numStr}Total">0 ကျပ်</span>
+                </div>
+            `;
+        }
+        doubleHTML += '</div>';
+        doubleTab.innerHTML = doubleHTML;
+        
+        // အပါစာရင်းအတွက် (0-9)
+        const apaTab = document.getElementById('apa-tab');
+        let apaHTML = '<div class="apa-summary">';
+        for (let i = 0; i <= 9; i++) {
+            apaHTML += `
+                <div class="summary-row">
+                    <span>${i} အပါ</span>
+                    <span class="summary-amount" id="apa${i}Total">0 ကျပ်</span>
+                </div>
+            `;
+        }
+        apaHTML += '</div>';
+        apaTab.innerHTML = apaHTML;
+    }
+    
     // အစပြုရန်
     function init() {
         // ဒေတာများကို ပြန်လည်ရယူရန်
         loadDataFromLocalStorage();
+        
+        // အထူးစာရင်းဇယားများအတွက် HTML ဖန်တီးရန်
+        createSpecialTableHTML();
         
         // UI ကို ပြသရန်
         renderNames();
@@ -661,19 +786,26 @@ document.addEventListener('DOMContentLoaded', function() {
                     return;
                 }
                 
-                selectedNumber = value;
+                selectedNumber += value;
                 updateCurrentSelection();
             });
         });
         
         deleteBtn.addEventListener('click', function() {
+            if (selectedNumber.length > 0) {
+                selectedNumber = selectedNumber.slice(0, -1);
+                updateCurrentSelection();
+            }
+        });
+        
+        clearAllBtn.addEventListener('click', function() {
             selectedNumber = "";
             updateCurrentSelection();
         });
         
         confirmBtn.addEventListener('click', addBet);
         
-        // ထိပ်၊ နောက်၊ အပူး ခလုတ်များ
+        // ထိုးကြေးအမျိုးအစား ခလုတ်များ
         frontBtn.addEventListener('click', function() {
             currentBetType = "front";
             selectedNumber = "";
@@ -688,6 +820,18 @@ document.addEventListener('DOMContentLoaded', function() {
         
         doubleBtn.addEventListener('click', function() {
             currentBetType = "double";
+            selectedNumber = "";
+            updateCurrentSelection();
+        });
+        
+        apaBtn.addEventListener('click', function() {
+            currentBetType = "apa";
+            selectedNumber = "";
+            updateCurrentSelection();
+        });
+        
+        singleBtn.addEventListener('click', function() {
+            currentBetType = "single";
             selectedNumber = "";
             updateCurrentSelection();
         });
@@ -756,55 +900,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // အထူးစာရင်းဇယားများကို ပြသရန်
         updateSpecialTables();
-        
-        // 1 ထိပ်၊ 2 ထိပ် စသည့် စာရင်းများအတွက် HTML ဖန်တီးရန်
-        createSpecialTableHTML();
-    }
-    
-    // အထူးစာရင်းဇယားများအတွက် HTML ဖန်တီးရန်
-    function createSpecialTableHTML() {
-        // ထိပ်စာရင်းအတွက်
-        const frontTab = document.getElementById('front-tab');
-        let frontHTML = '<div class="front-summary">';
-        for (let i = 0; i <= 9; i++) {
-            frontHTML += `
-                <div class="summary-row">
-                    <span>${i} ထိပ်</span>
-                    <span class="summary-amount" id="front${i}Total">0 ကျပ်</span>
-                </div>
-            `;
-        }
-        frontHTML += '</div>';
-        frontTab.innerHTML = frontHTML;
-        
-        // နောက်စာရင်းအတွက်
-        const backTab = document.getElementById('back-tab');
-        let backHTML = '<div class="back-summary">';
-        for (let i = 0; i <= 9; i++) {
-            backHTML += `
-                <div class="summary-row">
-                    <span>${i} နောက်</span>
-                    <span class="summary-amount" id="back${i}Total">0 ကျပ်</span>
-                </div>
-            `;
-        }
-        backHTML += '</div>';
-        backTab.innerHTML = backHTML;
-        
-        // အပူးစာရင်းအတွက် (အဓိက 00-33 အထိသာ ပြသရန်)
-        const doubleTab = document.getElementById('double-tab');
-        let doubleHTML = '<div class="double-summary">';
-        for (let i = 0; i <= 33; i++) {
-            const numStr = i < 10 ? `0${i}` : i.toString();
-            doubleHTML += `
-                <div class="summary-row">
-                    <span>${numStr}</span>
-                    <span class="summary-amount" id="double${numStr}Total">0 ကျပ်</span>
-                </div>
-            `;
-        }
-        doubleHTML += '</div>';
-        doubleTab.innerHTML = doubleHTML;
     }
     
     // အပလီကေးရှင်းကို စတင်ခြင်း
