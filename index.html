@@ -16,68 +16,60 @@
 
         <main>
             <div class="input-group">
-                <input type="text" placeholder="အမည် ရွေးရန်" id="nameInput">
-                <span class="label-info">(Admin)</span>
+                <input type="text" id="userName" placeholder="အမည် ရိုက်ထည့်ပါ">
             </div>
 
-            <div class="purple-box">
-                <input type="number" placeholder="ထွက်ဂဏန်း" id="winNum">
-                <input type="number" placeholder="ထိုးကြေးစုစုပေါင်း" id="totalAmt">
+            <div class="display-section">
+                <input type="text" id="displayNum" placeholder="ဂဏန်း" readonly>
+                <input type="text" id="displayAmt" placeholder="ငွေပမာဏ" readonly>
             </div>
 
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
-                            <th>အမျိုးအစား</th>
+                            <th>အမည်</th>
                             <th>ဂဏန်း</th>
-                            <th>ပမာဏ</th>
+                            <th>ပမာဏ (ကျပ်)</th>
                         </tr>
                     </thead>
-                    <tbody id="dataList">
-                        <tr>
-                            <td>F2</td>
-                            <td>12</td>
-                            <td>1,000</td>
-                        </tr>
-                    </tbody>
+                    <tbody id="dataList"></tbody>
                 </table>
             </div>
 
             <div class="numpad">
                 <div class="num-row">
-                    <button onclick="appendNum(7)">7</button>
-                    <button onclick="appendNum(8)">8</button>
-                    <button onclick="appendNum(9)">9</button>
-                    <button class="orange-btn">R</button>
+                    <button onclick="appendValue('7')">7</button>
+                    <button onclick="appendValue('8')">8</button>
+                    <button onclick="appendValue('9')">9</button>
+                    <button class="orange-btn" onclick="toggleInputType()">R</button>
                 </div>
                 <div class="num-row">
-                    <button onclick="appendNum(4)">4</button>
-                    <button onclick="appendNum(5)">5</button>
-                    <button onclick="appendNum(6)">6</button>
-                    <button class="green-btn">အိုကေ</button>
+                    <button onclick="appendValue('4')">4</button>
+                    <button onclick="appendValue('5')">5</button>
+                    <button onclick="appendValue('6')">6</button>
+                    <button class="green-btn" onclick="saveEntry()">အိုကေ</button>
                 </div>
                 <div class="num-row">
-                    <button onclick="appendNum(1)">1</button>
-                    <button onclick="appendNum(2)">2</button>
-                    <button onclick="appendNum(3)">3</button>
-                    <button class="red-btn" onclick="clearInput()">DEL</button>
+                    <button onclick="appendValue('1')">1</button>
+                    <button onclick="appendValue('2')">2</button>
+                    <button onclick="appendValue('3')">3</button>
+                    <button class="red-btn" onclick="clearLast()">DEL</button>
                 </div>
                 <div class="num-row">
-                    <button onclick="appendNum(0)">0</button>
-                    <button onclick="appendNum('00')">00</button>
-                    <button class="blue-btn" style="flex: 2;">သိမ်းမည်</button>
+                    <button onclick="appendValue('0')">0</button>
+                    <button onclick="appendValue('00')">00</button>
+                    <button class="blue-btn" style="flex: 2;" onclick="saveEntry()">သိမ်းမည်</button>
                 </div>
             </div>
 
             <div class="footer-total">
                 <span>စုစုပေါင်း:</span>
-                <span class="total-price">0 ကျပ်</span>
+                <span id="totalPriceDisplay">0</span> ကျပ်
             </div>
 
             <div class="action-buttons">
-                <button class="clear-all">အားလုံးဖျက်မည်</button>
-                <button class="history-btn">မှတ်တမ်းကြည့်ရန်</button>
+                <button class="clear-all" onclick="clearAllData()">အားလုံးဖျက်မည်</button>
             </div>
         </main>
     </div>
