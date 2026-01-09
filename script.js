@@ -1,53 +1,68 @@
 document.addEventListener('DOMContentLoaded', function() {
     // ဒေတာသိုလှောင်ရန်
     let namesData = [
-        { id: 1, name: "ဦးကျော်မြင့်", amount: 50000 },
-        { id: 2, name: "မောင်မျိုးအောင်", amount: 30000 },
-        { id: 3, name: "ဒေါ်စန်းစန်း", amount: 75000 }
+        { id: 1, name: "ဦးကျော်မြင့်" },
+        { id: 2, name: "မောင်မျိုးအောင်" },
+        { id: 3, name: "ဒေါ်စန်းစန်း" }
     ];
     
-    let betsData = [];
-    let selectedNumbers = [];
-    let currentBetType = 'single'; // single, front, back, double
+    let betsData = [
+        // နမူနာဒေတာ
+        { id: 1, personId: 1, personName: "ဦးကျော်မြင့်", number: "1", type: "front", amount: 1000, date: new Date().toISOString() },
+        { id: 2, personId: 2, personName: "မောင်မျိုးအောင်", number: "5", type: "back", amount: 2000, date: new Date().toISOString() },
+        { id: 3, personId: 3, personName: "ဒေါ်စန်းစန်း", number: "11", type: "double", amount: 3000, date: new Date().toISOString() }
+    ];
+    
     let winningNumbers = {
         front: null,
         back: null,
         double: null
     };
     
+    let selectedPersonId = null;
+    let currentBetType = "single"; // single, front, back, double
+    let selectedNumber = "";
+    
     // DOM Elements
     const nameList = document.getElementById('nameList');
-    const betTableBody = document.getElementById('betTableBody');
+    const tableBody = document.getElementById('tableBody');
     const totalBetAmount = document.getElementById('totalBetAmount');
-    const currentNumberDisplay = document.getElementById('currentNumberDisplay');
+    const totalWinAmount = document.getElementById('totalWinAmount');
+    const netAmount = document.getElementById('netAmount');
+    const currentDateTime = document.getElementById('currentDateTime');
+    const resultDate = document.getElementById('resultDate');
     const addNameModal = document.getElementById('addNameModal');
+    const detailModal = document.getElementById('detailModal');
     const addNameBtn = document.getElementById('addNameBtn');
     const saveNewNameBtn = document.getElementById('saveNewNameBtn');
-    const modalClose = document.querySelector('.modal-close');
+    const modalClose = document.querySelectorAll('.modal-close');
     const cancelBtn = document.querySelector('.btn-cancel');
     const clearNamesBtn = document.getElementById('clearNamesBtn');
-    const saveNamesBtn = document.getElementById('saveNamesBtn');
+    const exportBtn = document.getElementById('exportBtn');
     const numberButtons = document.querySelectorAll('.number-btn');
     const deleteBtn = document.getElementById('deleteBtn');
-    const resetBtn = document.getElementById('resetBtn');
     const confirmBtn = document.getElementById('confirmBtn');
-    const selectAllBtn = document.getElementById('selectAllBtn');
-    const copyBtn = document.getElementById('copyBtn');
-    const pasteBtn = document.getElementById('pasteBtn');
-    const clearBetsBtn = document.getElementById('clearBetsBtn');
-    const betTypeButtons = document.querySelectorAll('.btn-bet-type');
+    const frontBtn = document.getElementById('frontBtn');
+    const backBtn = document.getElementById('backBtn');
+    const doubleBtn = document.getElementById('doubleBtn');
     const frontResult = document.getElementById('frontResult');
     const backResult = document.getElementById('backResult');
     const doubleResult = document.getElementById('doubleResult');
     const setResultBtn = document.getElementById('setResultBtn');
     const clearResultBtn = document.getElementById('clearResultBtn');
-    const historyDate = document.getElementById('historyDate');
-    const viewHistoryBtn = document.getElementById('viewHistoryBtn');
-    const historyDisplay = document.getElementById('historyDisplay');
-    const frontBtn = document.getElementById('frontBtn');
-    const backBtn = document.getElementById('backBtn');
-    const doubleBtn = document.getElementById('doubleBtn');
-    const singleBtn = document.getElementById('singleBtn');
+    const calculateBtn = document.getElementById('calculateBtn');
+    const tableTypeSelect = document.getElementById('tableTypeSelect');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const betAmount = document.getElementById('betAmount');
+    const currentSelectionText = document.getElementById('currentSelectionText');
+    const currentBetTypeText = document.getElementById('currentBetTypeText');
+    const quickSetButtons = document.querySelectorAll('.btn-quick-set');
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const detailName = document.getElementById('detailName');
+    const detailTotalBet = document.getElementById('detailTotalBet');
+    const detailTotalWin = document.getElementById('detailTotalWin');
+    const detailNetAmount = document.getElementById('detailNetAmount');
+    const detailTableBody = document.getElementById('detailTableBody');
     
     // မူလဒေတာများကို သိမ်းဆည်းရန်
     function saveDataToLocalStorage() {
@@ -78,286 +93,402 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (namesData.length === 0) {
             nameList.innerHTML = `
-                <div class="name-item" style="justify-content: center; color: #b0b0d0; font-style: italic;">
+                <div class="name-item" style="justify-content: center; color: #aaa; font-style: italic; padding: 20px;">
                     နာမည်စာရင်း မရှိပါ။ အသစ်ထည့်ပါ။
                 </div>
             `;
             return;
         }
         
-        namesData.forEach((person, index) => {
+        namesData.forEach((person) => {
+            // ဤသူအတွက် စုစုပေါင်းထိုးငွေကို တွက်ချက်ရန်
+            const personBets = betsData.filter(bet => bet.personId === person.id);
+            const totalBet = personBets.reduce((sum, bet) => sum + bet.amount, 0);
+            
             const nameItem = document.createElement('div');
-            nameItem.className = 'name-item';
+            nameItem.className = `name-item ${selectedPersonId === person.id ? 'active' : ''}`;
             nameItem.innerHTML = `
                 <div class="name-text">${person.name}</div>
+                <div class="name-stats">${totalBet.toLocaleString()} ကျပ်</div>
                 <div class="name-actions">
-                    <button class="btn-name-action btn-edit" data-index="${index}">
-                        <i class="fas fa-edit"></i> ပြင်မည်
+                    <button class="btn-name-action btn-view" data-id="${person.id}">
+                        <i class="fas fa-eye"></i> ကြည့်မည်
                     </button>
-                    <button class="btn-name-action btn-delete" data-index="${index}">
-                        <i class="fas fa-trash"></i> ဖျက်မည်
+                    <button class="btn-name-action btn-delete" data-id="${person.id}">
+                        <i class="fas fa-trash"></i>
                     </button>
                 </div>
             `;
             nameList.appendChild(nameItem);
+            
+            // နာမည်ကို နှိပ်လျှင် ရွေးချယ်ရန်
+            nameItem.addEventListener('click', function(e) {
+                if (!e.target.closest('.name-actions')) {
+                    selectedPersonId = person.id;
+                    renderNames();
+                    updateCurrentSelection();
+                }
+            });
         });
         
-        // ပြင်ဆင်ရန် ခလုတ်များ
-        document.querySelectorAll('.btn-edit').forEach(button => {
-            button.addEventListener('click', function() {
-                const index = parseInt(this.getAttribute('data-index'));
-                editName(index);
+        // ကြည့်ရန် ခလုတ်များ
+        document.querySelectorAll('.btn-view').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const personId = parseInt(this.getAttribute('data-id'));
+                viewPersonDetails(personId);
             });
         });
         
         // ဖျက်ရန် ခလုတ်များ
         document.querySelectorAll('.btn-delete').forEach(button => {
-            button.addEventListener('click', function() {
-                const index = parseInt(this.getAttribute('data-index'));
-                deleteName(index);
+            button.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const personId = parseInt(this.getAttribute('data-id'));
+                deleteName(personId);
             });
         });
     }
     
-    // ထိုးကြေးစာရင်းကို ပြသရန်
-    function renderBets() {
-        betTableBody.innerHTML = '';
+    // စာရင်းဇယားကို ပြသရန်
+    function renderTable(tableType = "all") {
+        tableBody.innerHTML = '';
         
-        if (betsData.length === 0) {
-            betTableBody.innerHTML = `
+        // စာရင်းဇယားအတွက် ဒေတာများကို စီရန်
+        let tableData = [];
+        
+        if (tableType === "all") {
+            tableData = [...betsData];
+        } else {
+            tableData = betsData.filter(bet => bet.type === tableType);
+        }
+        
+        if (tableData.length === 0) {
+            tableBody.innerHTML = `
                 <tr>
-                    <td colspan="4" style="text-align: center; color: #b0b0d0; font-style: italic; padding: 30px;">
-                        ထိုးကြေးများ မရှိပါ။
+                    <td colspan="6" style="text-align: center; color: #aaa; font-style: italic; padding: 30px;">
+                        စာရင်းများ မရှိပါ။
                     </td>
                 </tr>
             `;
-            updateTotalBet();
             return;
         }
         
-        betsData.forEach((bet, index) => {
+        // ရလဒ်တွက်ချက်ရန်
+        const winningFront = winningNumbers.front;
+        const winningBack = winningNumbers.back;
+        const winningDouble = winningNumbers.double;
+        
+        tableData.forEach((bet) => {
             const row = document.createElement('tr');
+            
+            // ရလဒ်တွက်ချက်ရန်
+            let result = "မပေါက်ပါ";
+            let winAmount = 0;
+            let isWin = false;
+            
+            if (bet.type === "front" && winningFront === bet.number) {
+                result = "ပေါက်ပါသည်";
+                winAmount = bet.amount * 9; // ထိပ်အတွက် 9ဆ
+                isWin = true;
+            } else if (bet.type === "back" && winningBack === bet.number) {
+                result = "ပေါက်ပါသည်";
+                winAmount = bet.amount * 9; // နောက်အတွက် 9ဆ
+                isWin = true;
+            } else if (bet.type === "double" && winningDouble === bet.number) {
+                result = "ပေါက်ပါသည်";
+                winAmount = bet.amount * 85; // အပူးအတွက် 85ဆ
+                isWin = true;
+            } else if (bet.type === "single") {
+                // တစ်လုံးချင်းအတွက် ရလဒ်တွက်ချက်ရန်
+                const combinedNumber = winningFront + winningBack;
+                if (bet.number === combinedNumber) {
+                    result = "ပေါက်ပါသည်";
+                    winAmount = bet.amount * 85; // တစ်လုံးချင်းအတွက် 85ဆ
+                    isWin = true;
+                }
+            }
+            
+            const netResult = winAmount - bet.amount;
+            
             row.innerHTML = `
-                <td>${bet.numbers.join(', ')}</td>
+                <td>${bet.personName}</td>
+                <td>${formatNumberDisplay(bet.number, bet.type)}</td>
                 <td>${getBetTypeText(bet.type)}</td>
                 <td>${bet.amount.toLocaleString()} ကျပ်</td>
-                <td>
-                    <button class="btn-bet-action btn-bet-edit" data-index="${index}">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn-bet-action btn-bet-delete" data-index="${index}">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
+                <td class="${isWin ? 'win-cell' : 'loss-cell'}">${result}</td>
+                <td class="${netResult >= 0 ? 'net-win' : 'net-loss'}">${netResult >= 0 ? '+' : ''}${netResult.toLocaleString()} ကျပ်</td>
             `;
-            betTableBody.appendChild(row);
+            tableBody.appendChild(row);
         });
         
-        // ပြင်ဆင်ရန် ခလုတ်များ
-        document.querySelectorAll('.btn-bet-edit').forEach(button => {
-            button.addEventListener('click', function() {
-                const index = parseInt(this.getAttribute('data-index'));
-                editBet(index);
-            });
-        });
-        
-        // ဖျက်ရန် ခလုတ်များ
-        document.querySelectorAll('.btn-bet-delete').forEach(button => {
-            button.addEventListener('click', function() {
-                const index = parseInt(this.getAttribute('data-index'));
-                deleteBet(index);
-            });
-        });
-        
-        updateTotalBet();
+        updateTotals();
+        updateSpecialTables();
+    }
+    
+    // နံပါတ်ပြသမှုကို ဖော်မတ်လုပ်ရန်
+    function formatNumberDisplay(number, type) {
+        switch(type) {
+            case "front": return `${number}ထိပ်`;
+            case "back": return `${number}နောက်`;
+            case "double": return number.length === 1 ? `0${number}` : number;
+            default: return number;
+        }
     }
     
     // ထိုးကြေးအမျိုးအစားကို စာသားဖြင့် ပြသရန်
     function getBetTypeText(type) {
         switch(type) {
-            case 'single': return 'တစ်လုံးချင်း';
-            case 'front': return 'ထိပ်';
-            case 'back': return 'နောက်';
-            case 'double': return 'အပူး';
+            case "single": return "တစ်လုံးချင်း";
+            case "front": return "ထိပ်";
+            case "back": return "နောက်";
+            case "double": return "အပူး";
             default: return type;
         }
     }
     
-    // စုစုပေါင်းထိုးကြေးကို တွက်ချက်ရန်
-    function updateTotalBet() {
-        let total = 0;
+    // စုစုပေါင်းငွေများကို အပ်ဒိတ်လုပ်ရန်
+    function updateTotals() {
+        let totalBet = 0;
+        let totalWin = 0;
+        
         betsData.forEach(bet => {
-            total += bet.amount;
+            totalBet += bet.amount;
+            
+            // ထွက်ငွေတွက်ချက်ရန်
+            if (bet.type === "front" && winningNumbers.front === bet.number) {
+                totalWin += bet.amount * 9;
+            } else if (bet.type === "back" && winningNumbers.back === bet.number) {
+                totalWin += bet.amount * 9;
+            } else if (bet.type === "double" && winningNumbers.double === bet.number) {
+                totalWin += bet.amount * 85;
+            } else if (bet.type === "single") {
+                const combinedNumber = winningNumbers.front + winningNumbers.back;
+                if (bet.number === combinedNumber) {
+                    totalWin += bet.amount * 85;
+                }
+            }
         });
-        totalBetAmount.textContent = `${total.toLocaleString()} ကျပ်`;
+        
+        const net = totalWin - totalBet;
+        
+        totalBetAmount.textContent = `${totalBet.toLocaleString()} ကျပ်`;
+        totalWinAmount.textContent = `${totalWin.toLocaleString()} ကျပ်`;
+        netAmount.textContent = `${net >= 0 ? '+' : ''}${net.toLocaleString()} ကျပ်`;
+        
+        // အသားတင်ရလဒ်အား အရောင်ပြောင်းရန်
+        if (net >= 0) {
+            netAmount.style.color = '#2ecc71';
+        } else {
+            netAmount.style.color = '#e74c3c';
+        }
+    }
+    
+    // အထူးစာရင်းဇယားများကို အပ်ဒိတ်လုပ်ရန်
+    function updateSpecialTables() {
+        // ထိပ်များအတွက် စုစုပေါင်းထိုးငွေများ
+        for (let i = 0; i <= 9; i++) {
+            const frontTotal = betsData
+                .filter(bet => bet.type === "front" && bet.number === i.toString())
+                .reduce((sum, bet) => sum + bet.amount, 0);
+            
+            const elementId = `front${i}Total`;
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = `${frontTotal.toLocaleString()} ကျပ်`;
+            }
+        }
+        
+        // နောက်များအတွက် စုစုပေါင်းထိုးငွေများ
+        for (let i = 0; i <= 9; i++) {
+            const backTotal = betsData
+                .filter(bet => bet.type === "back" && bet.number === i.toString())
+                .reduce((sum, bet) => sum + bet.amount, 0);
+            
+            const elementId = `back${i}Total`;
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = `${backTotal.toLocaleString()} ကျပ်`;
+            }
+        }
+        
+        // အပူးများအတွက် စုစုပေါင်းထိုးငွေများ (00-99)
+        for (let i = 0; i <= 99; i++) {
+            const numStr = i < 10 ? `0${i}` : i.toString();
+            const doubleTotal = betsData
+                .filter(bet => bet.type === "double" && bet.number === numStr)
+                .reduce((sum, bet) => sum + bet.amount, 0);
+            
+            const elementId = `double${numStr}Total`;
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = `${doubleTotal.toLocaleString()} ကျပ်`;
+            }
+        }
+    }
+    
+    // လက်ရှိရွေးချယ်မှုကို အပ်ဒိတ်လုပ်ရန်
+    function updateCurrentSelection() {
+        let displayText = "ရွေးချယ်ထားသော နံပါတ်: ";
+        
+        if (selectedNumber) {
+            displayText += formatNumberDisplay(selectedNumber, currentBetType);
+        } else {
+            displayText += "-";
+        }
+        
+        currentSelectionText.textContent = displayText;
+        currentBetTypeText.textContent = `အမျိုးအစား: ${getBetTypeText(currentBetType)}`;
     }
     
     // နာမည်အသစ်ထည့်ရန်
     function addNewName() {
         const name = document.getElementById('newUserName').value.trim();
-        const amount = parseInt(document.getElementById('newUserAmount').value);
         
         if (!name) {
             alert("ကျေးဇူးပြု၍ နာမည်ထည့်သွင်းပါ။");
             return;
         }
         
-        if (isNaN(amount) || amount <= 0) {
-            alert("ကျေးဇူးပြု၍ မှန်ကန်သော ငွေပမာဏထည့်သွင်းပါ။");
-            return;
-        }
-        
         const newId = namesData.length > 0 ? Math.max(...namesData.map(p => p.id)) + 1 : 1;
         namesData.push({
             id: newId,
-            name: name,
-            amount: amount
+            name: name
         });
         
         renderNames();
         addNameModal.style.display = 'none';
         document.getElementById('newUserName').value = '';
-        document.getElementById('newUserAmount').value = '1000';
         
         saveDataToLocalStorage();
-        alert(`အသစ်ထည့်သွင်းခြင်း အောင်မြင်ပါသည်!\nအမည်: ${name}\nကြိုတင်ငွေ: ${amount.toLocaleString()} ကျပ်`);
-    }
-    
-    // နာမည်ပြင်ဆင်ရန်
-    function editName(index) {
-        const person = namesData[index];
-        const newName = prompt("အမည်အသစ်ထည့်ပါ:", person.name);
-        
-        if (newName !== null && newName.trim() !== '') {
-            const newAmount = parseInt(prompt("ကြိုတင်ငွေအသစ်ထည့်ပါ (ကျပ်):", person.amount));
-            
-            if (!isNaN(newAmount) && newAmount > 0) {
-                namesData[index] = {
-                    ...person,
-                    name: newName.trim(),
-                    amount: newAmount
-                };
-                renderNames();
-                saveDataToLocalStorage();
-            }
-        }
+        alert(`အသစ်ထည့်သွင်းခြင်း အောင်မြင်ပါသည်!\nအမည်: ${name}`);
     }
     
     // နာမည်ဖျက်ရန်
-    function deleteName(index) {
-        if (confirm(`"${namesData[index].name}" ကို ဖျက်ရန် သေချာပါသလား?`)) {
-            namesData.splice(index, 1);
+    function deleteName(personId) {
+        const person = namesData.find(p => p.id === personId);
+        if (!person) return;
+        
+        if (confirm(`"${person.name}" ကို ဖျက်ရန် သေချာပါသလား?\n(ဤသူ၏ ထိုးကြေးမှတ်တမ်းများလည်း ဖျက်သွားပါမည်။)`)) {
+            // နာမည်ဖျက်ရန်
+            namesData = namesData.filter(p => p.id !== personId);
+            
+            // ဤသူနှင့်ဆိုင်သော ထိုးကြေးများကို ဖျက်ရန်
+            betsData = betsData.filter(bet => bet.personId !== personId);
+            
             renderNames();
+            renderTable(tableTypeSelect.value);
             saveDataToLocalStorage();
         }
     }
     
-    // ထိုးကြေးပြင်ဆင်ရန်
-    function editBet(index) {
-        const bet = betsData[index];
-        const newAmount = parseInt(prompt("ထိုးကြေးပမာဏအသစ်ထည့်ပါ (ကျပ်):", bet.amount));
+    // လူတစ်ဦးချင်းစီ၏ အသေးစိတ်စာရင်းကို ကြည့်ရန်
+    function viewPersonDetails(personId) {
+        const person = namesData.find(p => p.id === personId);
+        if (!person) return;
         
-        if (!isNaN(newAmount) && newAmount > 0) {
-            betsData[index].amount = newAmount;
-            renderBets();
-            saveDataToLocalStorage();
-        }
-    }
-    
-    // ထိုးကြေးဖျက်ရန်
-    function deleteBet(index) {
-        if (confirm("ဤထိုးကြေးကို ဖျက်ရန် သေချာပါသလား?")) {
-            betsData.splice(index, 1);
-            renderBets();
-            saveDataToLocalStorage();
-        }
-    }
-    
-    // ထိုးကြေးအမျိုးအစား ပြောင်းလဲရန်
-    function setBetType(type) {
-        currentBetType = type;
-        betTypeButtons.forEach(btn => {
-            if (btn.getAttribute('data-type') === type) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
-        });
+        // အသေးစိတ်စာရင်းများကို ရယူရန်
+        const personBets = betsData.filter(bet => bet.personId === personId);
         
-        // ရွေးထားသော နံပါတ်များကို ရှင်းလင်းရန်
-        selectedNumbers = [];
-        updateCurrentNumberDisplay();
+        // စုစုပေါင်းငွေများ တွက်ချက်ရန်
+        let totalBet = 0;
+        let totalWin = 0;
+        
+        detailTableBody.innerHTML = '';
+        
+        if (personBets.length === 0) {
+            detailTableBody.innerHTML = `
+                <tr>
+                    <td colspan="6" style="text-align: center; color: #aaa; font-style: italic; padding: 20px;">
+                        ထိုးကြေးများ မရှိပါ။
+                    </td>
+                </tr>
+            `;
+        } else {
+            personBets.forEach(bet => {
+                // ရလဒ်တွက်ချက်ရန်
+                let result = "မပေါက်ပါ";
+                let winAmount = 0;
+                
+                if (bet.type === "front" && winningNumbers.front === bet.number) {
+                    result = "ပေါက်ပါသည်";
+                    winAmount = bet.amount * 9;
+                } else if (bet.type === "back" && winningNumbers.back === bet.number) {
+                    result = "ပေါက်ပါသည်";
+                    winAmount = bet.amount * 9;
+                } else if (bet.type === "double" && winningNumbers.double === bet.number) {
+                    result = "ပေါက်ပါသည်";
+                    winAmount = bet.amount * 85;
+                } else if (bet.type === "single") {
+                    const combinedNumber = winningNumbers.front + winningNumbers.back;
+                    if (bet.number === combinedNumber) {
+                        result = "ပေါက်ပါသည်";
+                        winAmount = bet.amount * 85;
+                    }
+                }
+                
+                totalBet += bet.amount;
+                totalWin += winAmount;
+                
+                const date = new Date(bet.date);
+                const dateStr = date.toLocaleDateString('my-MM') + ' ' + date.toLocaleTimeString('my-MM', { hour: '2-digit', minute: '2-digit' });
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${formatNumberDisplay(bet.number, bet.type)}</td>
+                    <td>${getBetTypeText(bet.type)}</td>
+                    <td>${bet.amount.toLocaleString()} ကျပ်</td>
+                    <td class="${winAmount > 0 ? 'win-cell' : 'loss-cell'}">${result}</td>
+                    <td>${winAmount.toLocaleString()} ကျပ်</td>
+                    <td>${dateStr}</td>
+                `;
+                detailTableBody.appendChild(row);
+            });
+        }
+        
+        const net = totalWin - totalBet;
+        
+        detailName.textContent = person.name;
+        detailTotalBet.textContent = `${totalBet.toLocaleString()} ကျပ်`;
+        detailTotalWin.textContent = `${totalWin.toLocaleString()} ကျပ်`;
+        detailNetAmount.textContent = `${net >= 0 ? '+' : ''}${net.toLocaleString()} ကျပ်`;
+        
+        if (net >= 0) {
+            detailNetAmount.style.color = '#2ecc71';
+        } else {
+            detailNetAmount.style.color = '#e74c3c';
+        }
+        
+        detailModal.style.display = 'flex';
     }
     
-    // လက်ရှိရွေးထားသော နံပါတ်များကို ပြသရန်
-    function updateCurrentNumberDisplay() {
-        if (selectedNumbers.length === 0) {
-            currentNumberDisplay.textContent = '-';
+    // ထိုးကြေးထည့်သွင်းရန်
+    function addBet() {
+        if (!selectedPersonId) {
+            alert("ကျေးဇူးပြု၍ နာမည်ရွေးပါ။");
             return;
         }
         
-        let displayText = '';
-        if (currentBetType === 'single') {
-            displayText = selectedNumbers.join(', ');
-        } else if (currentBetType === 'front') {
-            displayText = selectedNumbers.map(num => `${num}ထိပ်`).join(', ');
-        } else if (currentBetType === 'back') {
-            displayText = selectedNumbers.map(num => `${num}နောက်`).join(', ');
-        } else if (currentBetType === 'double') {
-            displayText = selectedNumbers.map(num => {
-                if (num.length === 1) return `0${num}`;
-                return num;
-            }).join(', ');
-        }
-        
-        currentNumberDisplay.textContent = displayText;
-    }
-    
-    // ထိုးကြေးအတည်ပြုရန်
-    function confirmBet() {
-        if (selectedNumbers.length === 0) {
+        if (!selectedNumber) {
             alert("ကျေးဇူးပြု၍ နံပါတ်ရွေးပါ။");
             return;
         }
         
-        if (namesData.length === 0) {
-            alert("ကျေးဇူးပြု၍ နာမည်စာရင်းထဲမှ နာမည်တစ်ခုရွေးပါ။");
-            return;
-        }
-        
-        // နာမည်ရွေးရန် dialog
-        let nameOptions = namesData.map((person, index) => `${index + 1}. ${person.name}`).join('\n');
-        const nameIndex = parseInt(prompt(`နာမည်ရွေးပါ:\n${nameOptions}`)) - 1;
-        
-        if (isNaN(nameIndex) || nameIndex < 0 || nameIndex >= namesData.length) {
-            alert("မှားယွင်းသော ရွေးချယ်မှုဖြစ်သည်။");
-            return;
-        }
-        
-        const selectedPerson = namesData[nameIndex];
-        
-        // ထိုးကြေးပမာဏမေးရန်
-        const amount = parseInt(prompt(`ထိုးကြေးပမာဏထည့်ပါ (ကျပ်):\n${selectedPerson.name} ၏ ကျန်ငွေ: ${selectedPerson.amount.toLocaleString()} ကျပ်`, "100"));
-        
+        const amount = parseInt(betAmount.value);
         if (isNaN(amount) || amount <= 0) {
-            alert("မှားယွင်းသော ငွေပမာဏဖြစ်သည်။");
+            alert("မှန်ကန်သော ငွေပမာဏထည့်ပါ။");
             return;
         }
         
-        if (amount > selectedPerson.amount) {
-            alert("ကြိုတင်ငွေမလုံလောက်ပါ။");
-            return;
-        }
+        const person = namesData.find(p => p.id === selectedPersonId);
+        if (!person) return;
         
-        // နာမည်စာရင်းမှ ငွေနုတ်ရန်
-        namesData[nameIndex].amount -= amount;
-        
-        // ထိုးကြေးစာရင်းတွင် ထည့်ရန်
+        const newId = betsData.length > 0 ? Math.max(...betsData.map(b => b.id)) + 1 : 1;
         const newBet = {
-            id: betsData.length > 0 ? Math.max(...betsData.map(b => b.id)) + 1 : 1,
-            personId: selectedPerson.id,
-            personName: selectedPerson.name,
-            numbers: [...selectedNumbers],
+            id: newId,
+            personId: selectedPersonId,
+            personName: person.name,
+            number: selectedNumber,
             type: currentBetType,
             amount: amount,
             date: new Date().toISOString()
@@ -365,16 +496,15 @@ document.addEventListener('DOMContentLoaded', function() {
         
         betsData.push(newBet);
         
-        // ရွေးထားသော နံပါတ်များကို ရှင်းလင်းရန်
-        selectedNumbers = [];
-        updateCurrentNumberDisplay();
+        // ရွေးချယ်မှုများကို ရှင်းလင်းရန်
+        selectedNumber = "";
+        updateCurrentSelection();
         
         // UI ကို အပ်ဒိတ်လုပ်ရန်
-        renderNames();
-        renderBets();
+        renderTable(tableTypeSelect.value);
         saveDataToLocalStorage();
         
-        alert(`အောင်မြင်ပါသည်!\n${selectedPerson.name} အတွက် ${amount.toLocaleString()} ကျပ် ထိုးကြေးအတည်ပြုပြီးပါပြီ။`);
+        alert(`ထည့်သွင်းခြင်း အောင်မြင်ပါသည်!\n${person.name} - ${formatNumberDisplay(newBet.number, newBet.type)} - ${amount.toLocaleString()} ကျပ်`);
     }
     
     // ပေါက်ဂဏန်းသတ်မှတ်ရန်
@@ -383,8 +513,26 @@ document.addEventListener('DOMContentLoaded', function() {
         const back = backResult.value.trim();
         const double = doubleResult.value.trim();
         
+        // အနည်းဆုံး တစ်ခုခုထည့်ရန်
         if (!front && !back && !double) {
             alert("ကျေးဇူးပြု၍ ပေါက်ဂဏန်းတစ်ခုခုထည့်ပါ။");
+            return;
+        }
+        
+        // ထိပ်နှင့်နောက်အတွက် စစ်ဆေးရန်
+        if (front && (front.length !== 1 || isNaN(front) || parseInt(front) < 0 || parseInt(front) > 9)) {
+            alert("ထိပ်ဂဏန်းအတွက် 0-9 အထိသာ ခွင့်ပြုသည်။");
+            return;
+        }
+        
+        if (back && (back.length !== 1 || isNaN(back) || parseInt(back) < 0 || parseInt(back) > 9)) {
+            alert("နောက်ဂဏန်းအတွက် 0-9 အထိသာ ခွင့်ပြုသည်။");
+            return;
+        }
+        
+        // အပူးအတွက် စစ်ဆေးရန်
+        if (double && (double.length > 2 || isNaN(double) || parseInt(double) < 0 || parseInt(double) > 99)) {
+            alert("အပူးဂဏန်းအတွက် 00-99 အထိသာ ခွင့်ပြုသည်။");
             return;
         }
         
@@ -393,51 +541,62 @@ document.addEventListener('DOMContentLoaded', function() {
         winningNumbers.double = double || null;
         
         saveDataToLocalStorage();
-        alert("ပေါက်ဂဏန်းများ သတ်မှတ်ပြီးပါပြီ။");
+        renderTable(tableTypeSelect.value);
+        alert("ပေါက်ဂဏန်းများ သတ်မှတ်ပြီးပါပြီ။\nရလဒ်များကို ပြန်လည်တွက်ချက်ပါမည်။");
     }
     
-    // ရက်လိုက်သမိုင်းကြည့်ရန်
-    function viewHistory() {
-        const selectedDate = historyDate.value;
-        
-        if (!selectedDate) {
-            alert("ကျေးဇူးပြု၍ ရက်စွဲရွေးပါ။");
+    // စာရင်းများကို Export လုပ်ရန်
+    function exportData() {
+        if (betsData.length === 0) {
+            alert("Export လုပ်ရန် ဒေတာများ မရှိပါ။");
             return;
         }
         
-        const dateObj = new Date(selectedDate);
-        const dateStr = dateObj.toLocaleDateString('my-MM');
+        // CSV format ဖြင့် ဒေတာများကို ပြင်ဆင်ရန်
+        let csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += "နာမည်,နံပါတ်,အမျိုးအစား,ပမာဏ(ကျပ်),ရက်စွဲ\n";
         
-        // ရွေးထားသောရက်စွဲနှင့် ကိုက်ညီသော ထိုးကြေးများကို ရှာရန်
-        const filteredBets = betsData.filter(bet => {
-            const betDate = new Date(bet.date).toDateString();
-            return betDate === dateObj.toDateString();
+        betsData.forEach(bet => {
+            const date = new Date(bet.date);
+            const dateStr = date.toLocaleDateString('my-MM');
+            const row = [
+                `"${bet.personName}"`,
+                `"${formatNumberDisplay(bet.number, bet.type)}"`,
+                `"${getBetTypeText(bet.type)}"`,
+                bet.amount,
+                `"${dateStr}"`
+            ].join(',');
+            csvContent += row + "\n";
         });
         
-        if (filteredBets.length === 0) {
-            historyDisplay.innerHTML = `
-                <div class="history-placeholder">
-                    ${dateStr} ရက်နေ့တွင် ထိုးကြေးများ မရှိပါ။
-                </div>
-            `;
-            return;
-        }
+        // ဖိုင်အမည်
+        const date = new Date();
+        const fileName = `kkuser2d_export_${date.getFullYear()}${(date.getMonth()+1).toString().padStart(2, '0')}${date.getDate().toString().padStart(2, '0')}.csv`;
         
-        let historyHTML = `<h4 style="margin-bottom: 15px; color: #e94560;">${dateStr} ရက်နေ့၏ ထိုးကြေးများ</h4>`;
-        historyHTML += `<div style="display: flex; flex-direction: column; gap: 10px;">`;
+        // Download link ဖန်တီးရန်
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", fileName);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
         
-        filteredBets.forEach(bet => {
-            historyHTML += `
-                <div style="background: rgba(74, 74, 109, 0.5); padding: 10px; border-radius: 8px;">
-                    <div><strong>${bet.personName}</strong></div>
-                    <div>နံပါတ်များ: ${bet.numbers.join(', ')} (${getBetTypeText(bet.type)})</div>
-                    <div>ပမာဏ: ${bet.amount.toLocaleString()} ကျပ်</div>
-                </div>
-            `;
+        alert(`ဒေတာများ Export လုပ်ပြီးပါပြီ။\nဖိုင်အမည်: ${fileName}`);
+    }
+    
+    // ရက်စွဲနှင့်အချိန်ကို အပ်ဒိတ်လုပ်ရန်
+    function updateDateTime() {
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('my-MM', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            weekday: 'long'
         });
-        
-        historyHTML += `</div>`;
-        historyDisplay.innerHTML = historyHTML;
+        const timeStr = now.toLocaleTimeString('my-MM');
+        currentDateTime.textContent = `${dateStr} ${timeStr}`;
+        resultDate.textContent = `ရက်စွဲ: ${now.toLocaleDateString('my-MM')}`;
     }
     
     // အစပြုရန်
@@ -447,22 +606,26 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // UI ကို ပြသရန်
         renderNames();
-        renderBets();
-        updateCurrentNumberDisplay();
+        renderTable();
+        updateDateTime();
+        updateCurrentSelection();
         
-        // ယနေ့ရက်စွဲကို ပုံသေထားရန်
-        const today = new Date().toISOString().split('T')[0];
-        historyDate.value = today;
+        // ရက်စွဲနှင့်အချိန်ကို စက္ကန့်တိုင်း အပ်ဒိတ်လုပ်ရန်
+        setInterval(updateDateTime, 1000);
         
         // Event Listeners
         addNameBtn.addEventListener('click', function() {
             addNameModal.style.display = 'flex';
+            document.getElementById('newUserName').focus();
         });
         
         saveNewNameBtn.addEventListener('click', addNewName);
         
-        modalClose.addEventListener('click', function() {
-            addNameModal.style.display = 'none';
+        modalClose.forEach(closeBtn => {
+            closeBtn.addEventListener('click', function() {
+                addNameModal.style.display = 'none';
+                detailModal.style.display = 'none';
+            });
         });
         
         cancelBtn.addEventListener('click', function() {
@@ -470,122 +633,63 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         clearNamesBtn.addEventListener('click', function() {
-            if (confirm("နာမည်စာရင်းအားလုံးကို ဖျက်ရန် သေချာပါသလား?")) {
+            if (confirm("နာမည်စာရင်းအားလုံးကို ဖျက်ရန် သေချာပါသလား?\n(ထိုးကြေးမှတ်တမ်းများလည်း ဖျက်သွားပါမည်။)")) {
                 namesData = [];
+                betsData = [];
                 renderNames();
+                renderTable();
                 saveDataToLocalStorage();
             }
         });
         
-        saveNamesBtn.addEventListener('click', function() {
-            saveDataToLocalStorage();
-            alert("နာမည်စာရင်းများ သိမ်းဆည်းပြီးပါပြီ။");
-        });
+        exportBtn.addEventListener('click', exportData);
         
         // ဂဏန်းခလုတ်များ
         numberButtons.forEach(button => {
             button.addEventListener('click', function() {
                 const value = this.getAttribute('data-value');
                 
-                // အပူးအတွက် နံပါတ်စစ်ဆေးခြင်း
-                if (currentBetType === 'double') {
-                    if (value.length > 2) {
-                        alert("အပူးအတွက် နံပါတ် ၂လုံးထက် မပိုရပါ။");
-                        return;
-                    }
-                    
-                    // 00 သို့မဟုတ် 0-99 အထိသာ ခွင့်ပြုသည်
-                    if (value.length === 1 && parseInt(value) > 9) {
-                        alert("အပူးအတွက် 0-99 အထိသာ ခွင့်ပြုသည်။");
-                        return;
-                    }
+                // ထိပ်နှင့်နောက်အတွက် စစ်ဆေးရန်
+                if ((currentBetType === "front" || currentBetType === "back") && value.length > 1) {
+                    alert("ထိပ်/နောက်အတွက် 0-9 အထိသာ ခွင့်ပြုသည်။");
+                    return;
                 }
                 
-                // ထိပ်နှင့်နောက်အတွက် နံပါတ်စစ်ဆေးခြင်း
-                if (currentBetType === 'front' || currentBetType === 'back') {
-                    if (value.length > 1 || parseInt(value) > 9) {
-                        alert("ထိပ်/နောက်အတွက် 0-9 အထိသာ ခွင့်ပြုသည်။");
-                        return;
-                    }
+                // အပူးအတွက် စစ်ဆေးရန်
+                if (currentBetType === "double" && value.length > 2) {
+                    alert("အပူးအတွက် 0-99 အထိသာ ခွင့်ပြုသည်။");
+                    return;
                 }
                 
-                selectedNumbers.push(value);
-                updateCurrentNumberDisplay();
+                selectedNumber = value;
+                updateCurrentSelection();
             });
         });
         
         deleteBtn.addEventListener('click', function() {
-            if (selectedNumbers.length > 0) {
-                selectedNumbers.pop();
-                updateCurrentNumberDisplay();
-            }
+            selectedNumber = "";
+            updateCurrentSelection();
         });
         
-        resetBtn.addEventListener('click', function() {
-            selectedNumbers = [];
-            updateCurrentNumberDisplay();
+        confirmBtn.addEventListener('click', addBet);
+        
+        // ထိပ်၊ နောက်၊ အပူး ခလုတ်များ
+        frontBtn.addEventListener('click', function() {
+            currentBetType = "front";
+            selectedNumber = "";
+            updateCurrentSelection();
         });
         
-        confirmBtn.addEventListener('click', confirmBet);
-        
-        selectAllBtn.addEventListener('click', function() {
-            if (currentBetType === 'front' || currentBetType === 'back') {
-                // 0-9 အားလုံးရွေးရန်
-                selectedNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-                updateCurrentNumberDisplay();
-            } else if (currentBetType === 'double') {
-                alert("အပူးအတွက် အားလုံးရွေးခြင်း မလုပ်ဆောင်နိုင်ပါ။");
-            } else {
-                alert("တစ်လုံးချင်းအတွက် အားလုံးရွေးခြင်း မလုပ်ဆောင်နိုင်ပါ။");
-            }
+        backBtn.addEventListener('click', function() {
+            currentBetType = "back";
+            selectedNumber = "";
+            updateCurrentSelection();
         });
         
-        copyBtn.addEventListener('click', function() {
-            if (betsData.length === 0) {
-                alert("ကူးယူရန် ထိုးကြေးများ မရှိပါ။");
-                return;
-            }
-            
-            const copyData = JSON.stringify(betsData);
-            navigator.clipboard.writeText(copyData)
-                .then(() => alert("ထိုးကြေးများ ကူးယူပြီးပါပြီ။"))
-                .catch(err => alert("ကူးယူရာတွင် အမှားတစ်ခုဖြစ်သည်။"));
-        });
-        
-        pasteBtn.addEventListener('click', function() {
-            navigator.clipboard.readText()
-                .then(text => {
-                    try {
-                        const pastedData = JSON.parse(text);
-                        if (Array.isArray(pastedData)) {
-                            betsData = pastedData;
-                            renderBets();
-                            saveDataToLocalStorage();
-                            alert("ထိုးကြေးများ ကူးထည့်ပြီးပါပြီ။");
-                        } else {
-                            alert("မှားယွင်းသော ဒေတာဖြစ်သည်။");
-                        }
-                    } catch (e) {
-                        alert("မှားယွင်းသော ဒေတာဖြစ်သည်။");
-                    }
-                })
-                .catch(err => alert("ကူးထည့်ရာတွင် အမှားတစ်ခုဖြစ်သည်။"));
-        });
-        
-        clearBetsBtn.addEventListener('click', function() {
-            if (confirm("ထိုးကြေးစာရင်းအားလုံးကို ဖျက်ရန် သေချာပါသလား?")) {
-                betsData = [];
-                renderBets();
-                saveDataToLocalStorage();
-            }
-        });
-        
-        // ထိုးကြေးအမျိုးအစား ခလုတ်များ
-        betTypeButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const type = this.getAttribute('data-type');
-                setBetType(type);
-            });
+        doubleBtn.addEventListener('click', function() {
+            currentBetType = "double";
+            selectedNumber = "";
+            updateCurrentSelection();
         });
         
         // ပေါက်ဂဏန်း ခလုတ်များ
@@ -599,28 +703,108 @@ document.addEventListener('DOMContentLoaded', function() {
             winningNumbers.back = null;
             winningNumbers.double = null;
             saveDataToLocalStorage();
+            renderTable(tableTypeSelect.value);
             alert("ပေါက်ဂဏန်းများ ရှင်းလင်းပြီးပါပြီ။");
         });
         
-        // ရက်လိုက်ပြန်ကြည့်ရန်
-        viewHistoryBtn.addEventListener('click', viewHistory);
-        
-        // ထိပ်၊ နောက်၊ အပူး ခလုတ်များအတွက် အထူးလုပ်ဆောင်ချက်များ
-        frontBtn.addEventListener('click', function() {
-            setBetType('front');
+        calculateBtn.addEventListener('click', function() {
+            renderTable(tableTypeSelect.value);
+            alert("ရလဒ်များကို ပြန်လည်တွက်ချက်ပြီးပါပြီ။");
         });
         
-        backBtn.addEventListener('click', function() {
-            setBetType('back');
+        // စာရင်းဇယားထိန်းချုပ်မှုများ
+        tableTypeSelect.addEventListener('change', function() {
+            renderTable(this.value);
         });
         
-        doubleBtn.addEventListener('click', function() {
-            setBetType('double');
+        refreshBtn.addEventListener('click', function() {
+            renderTable(tableTypeSelect.value);
         });
         
-        singleBtn.addEventListener('click', function() {
-            setBetType('single');
+        // အလျင်အမြန်သတ်မှတ်ရန် ခလုတ်များ
+        quickSetButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const type = this.getAttribute('data-type');
+                const value = this.getAttribute('data-value');
+                
+                if (type === "front") {
+                    frontResult.value = value;
+                } else if (type === "back") {
+                    backResult.value = value;
+                } else if (type === "double") {
+                    doubleResult.value = value;
+                }
+            });
         });
+        
+        // Tab ခလုတ်များ
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                
+                // Tab များကို အသက်သွင်းရန်
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Tab content များကို ပြသရန်
+                document.querySelectorAll('.tab-pane').forEach(pane => {
+                    pane.classList.remove('active');
+                });
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // အထူးစာရင်းဇယားများကို ပြသရန်
+        updateSpecialTables();
+        
+        // 1 ထိပ်၊ 2 ထိပ် စသည့် စာရင်းများအတွက် HTML ဖန်တီးရန်
+        createSpecialTableHTML();
+    }
+    
+    // အထူးစာရင်းဇယားများအတွက် HTML ဖန်တီးရန်
+    function createSpecialTableHTML() {
+        // ထိပ်စာရင်းအတွက်
+        const frontTab = document.getElementById('front-tab');
+        let frontHTML = '<div class="front-summary">';
+        for (let i = 0; i <= 9; i++) {
+            frontHTML += `
+                <div class="summary-row">
+                    <span>${i} ထိပ်</span>
+                    <span class="summary-amount" id="front${i}Total">0 ကျပ်</span>
+                </div>
+            `;
+        }
+        frontHTML += '</div>';
+        frontTab.innerHTML = frontHTML;
+        
+        // နောက်စာရင်းအတွက်
+        const backTab = document.getElementById('back-tab');
+        let backHTML = '<div class="back-summary">';
+        for (let i = 0; i <= 9; i++) {
+            backHTML += `
+                <div class="summary-row">
+                    <span>${i} နောက်</span>
+                    <span class="summary-amount" id="back${i}Total">0 ကျပ်</span>
+                </div>
+            `;
+        }
+        backHTML += '</div>';
+        backTab.innerHTML = backHTML;
+        
+        // အပူးစာရင်းအတွက် (အဓိက 00-33 အထိသာ ပြသရန်)
+        const doubleTab = document.getElementById('double-tab');
+        let doubleHTML = '<div class="double-summary">';
+        for (let i = 0; i <= 33; i++) {
+            const numStr = i < 10 ? `0${i}` : i.toString();
+            doubleHTML += `
+                <div class="summary-row">
+                    <span>${numStr}</span>
+                    <span class="summary-amount" id="double${numStr}Total">0 ကျပ်</span>
+                </div>
+            `;
+        }
+        doubleHTML += '</div>';
+        doubleTab.innerHTML = doubleHTML;
     }
     
     // အပလီကေးရှင်းကို စတင်ခြင်း
