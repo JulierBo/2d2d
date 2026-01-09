@@ -122,6 +122,7 @@
                                 <option value="back">နောက်များ</option>
                                 <option value="double">အပူးများ</option>
                                 <option value="single">တစ်လုံးချင်း</option>
+                                <option value="apa">အပါများ</option>
                             </select>
                             <button class="btn-refresh" id="refreshBtn">
                                 <i class="fas fa-sync-alt"></i> Refresh
@@ -148,57 +149,41 @@
                     </div>
                 </div>
 
-                <!-- ထိပ်/နောက်/အပူး အထူးစာရင်းဇယား -->
+                <!-- ထိပ်/နောက်/အပူး/အပါ အထူးစာရင်းဇယား -->
                 <div class="special-tables">
                     <div class="table-tabs">
                         <button class="tab-btn active" data-tab="front-tab">ထိပ်စာရင်း</button>
                         <button class="tab-btn" data-tab="back-tab">နောက်စာရင်း</button>
                         <button class="tab-btn" data-tab="double-tab">အပူးစာရင်း</button>
+                        <button class="tab-btn" data-tab="apa-tab">အပါစာရင်း</button>
                     </div>
                     
                     <div class="tab-content">
                         <!-- ထိပ်စာရင်း -->
                         <div class="tab-pane active" id="front-tab">
                             <div class="front-summary">
-                                <div class="summary-row">
-                                    <span>1 ထိပ်</span>
-                                    <span class="summary-amount" id="front1Total">0 ကျပ်</span>
-                                </div>
-                                <div class="summary-row">
-                                    <span>2 ထိပ်</span>
-                                    <span class="summary-amount" id="front2Total">0 ကျပ်</span>
-                                </div>
-                                <!-- 0-9 အထိ ထိပ်များ -->
+                                <!-- ထိပ်စာရင်းများ ဤနေရာတွင် ပြသပါမည် -->
                             </div>
                         </div>
                         
                         <!-- နောက်စာရင်း -->
                         <div class="tab-pane" id="back-tab">
                             <div class="back-summary">
-                                <div class="summary-row">
-                                    <span>1 နောက်</span>
-                                    <span class="summary-amount" id="back1Total">0 ကျပ်</span>
-                                </div>
-                                <div class="summary-row">
-                                    <span>2 နောက်</span>
-                                    <span class="summary-amount" id="back2Total">0 ကျပ်</span>
-                                </div>
-                                <!-- 0-9 အထိ နောက်များ -->
+                                <!-- နောက်စာရင်းများ ဤနေရာတွင် ပြသပါမည် -->
                             </div>
                         </div>
                         
                         <!-- အပူးစာရင်း -->
                         <div class="tab-pane" id="double-tab">
                             <div class="double-summary">
-                                <div class="summary-row">
-                                    <span>00</span>
-                                    <span class="summary-amount" id="double00Total">0 ကျပ်</span>
-                                </div>
-                                <div class="summary-row">
-                                    <span>11</span>
-                                    <span class="summary-amount" id="double11Total">0 ကျပ်</span>
-                                </div>
-                                <!-- 00-99 အထိ အပူးများ -->
+                                <!-- အပူးစာရင်းများ ဤနေရာတွင် ပြသပါမည် -->
+                            </div>
+                        </div>
+                        
+                        <!-- အပါစာရင်း -->
+                        <div class="tab-pane" id="apa-tab">
+                            <div class="apa-summary">
+                                <!-- အပါစာရင်းများ ဤနေရာတွင် ပြသပါမည် -->
                             </div>
                         </div>
                     </div>
@@ -241,11 +226,24 @@
                         <div class="keypad-row">
                             <button class="keypad-btn number-btn" data-value="0">0</button>
                             <button class="keypad-btn number-btn" data-value="00">00</button>
-                            <button class="keypad-btn function-btn delete-btn" id="deleteBtn">
-                                <i class="fas fa-backspace"></i> DEL
+                            <button class="keypad-btn function-btn apa-btn" id="apaBtn">
+                                <i class="fas fa-star"></i> အပါ
                             </button>
                             <button class="keypad-btn function-btn confirm-btn" id="confirmBtn">
                                 <i class="fas fa-check"></i> OK
+                            </button>
+                        </div>
+                        
+                        <!-- ပဉ္စမအတန်း (ထပ်ထည့်ထားသော) -->
+                        <div class="keypad-row">
+                            <button class="keypad-btn function-btn delete-btn" id="deleteBtn">
+                                <i class="fas fa-backspace"></i> DEL
+                            </button>
+                            <button class="keypad-btn function-btn clear-btn" id="clearAllBtn">
+                                <i class="fas fa-broom"></i> ရှင်းမည်
+                            </button>
+                            <button class="keypad-btn function-btn single-btn" id="singleBtn" style="grid-column: span 2;">
+                                <i class="fas fa-hashtag"></i> တစ်လုံးချင်း
                             </button>
                         </div>
                     </div>
